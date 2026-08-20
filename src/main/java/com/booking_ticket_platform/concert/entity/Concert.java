@@ -34,6 +34,9 @@ public class Concert {
     // e.g., DRAFT, PUBLISHED, CANCELLED
     @Column(nullable = false)
     private String status;
+    
+    @Column(name = "stage_layout")
+    private String stageLayout = "FRONT";
 
     @OneToMany(mappedBy = "concert", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketCategory> ticketCategories;

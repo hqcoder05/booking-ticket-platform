@@ -1,0 +1,1 @@
+ALTER TABLE concerts ADD COLUMN stage_layout VARCHAR(50) DEFAULT 'FRONT';
