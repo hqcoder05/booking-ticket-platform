@@ -16,6 +16,7 @@ import com.booking_ticket_platform.concert.repository.ISeatRepository;
 import com.booking_ticket_platform.booking.repository.IBookingRepository;
 import com.booking_ticket_platform.booking.entity.Booking;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;

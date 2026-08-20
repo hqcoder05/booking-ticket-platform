@@ -1,30 +1,30 @@
-# Concert Ticket Booking Platform â€” System & Database Design
+# Concert Ticket Booking Platform Ã¢â‚¬â€ System & Database Design
 
-**TÃ¡c giáº£:** HoÃ ng Nguyá»…n Viáº¿t Quá»‘c
-**Vá»‹ trÃ­ á»©ng tuyá»ƒn:** Product Backend Intern â€” GEEK Up Geek Internship Autumn 2026
-
----
-
-## 1. Business context tÃ³m táº¯t
-
-Ná»n táº£ng Ä‘áº·t vÃ© concert online, gá»“m 2 luá»“ng:
-- **Customer-facing**: browse concert, xem loáº¡i vÃ©, Ä‘áº·t vÃ©, Ã¡p voucher, theo dÃµi tráº¡ng thÃ¡i booking
-- **Operation Dashboard**: monitor booking, publish concert/vÃ©, quáº£n lÃ½ voucher (seed-only), xá»­ lÃ½ booking lá»—i, cáº­p nháº­t tráº¡ng thÃ¡i thá»§ cÃ´ng
-
-**RÃ ng buá»™c ká»¹ thuáº­t quan trá»ng:**
-- Traffic Ä‘á»‰nh: ~50,000 users, 300â€“500 booking request/phÃºt trong flash sale
-- Pháº£i chá»‘ng: oversell vÃ©, duplicate booking do retry, láº¡m dá»¥ng voucher, sáº­p há»‡ thá»‘ng khi traffic tÄƒng Ä‘á»™t biáº¿n
+**TÃƒÂ¡c giÃ¡ÂºÂ£:** HoÃƒÂ ng NguyÃ¡Â»â€¦n ViÃ¡ÂºÂ¿t QuÃ¡Â»â€˜c
+**VÃ¡Â»â€¹ trÃƒÂ­ Ã¡Â»Â©ng tuyÃ¡Â»Æ’n:** Product Backend Intern Ã¢â‚¬â€ GEEK Up Geek Internship Autumn 2026
 
 ---
 
-## 2. Kiáº¿n trÃºc tá»•ng quan
+## 1. Business context tÃƒÂ³m tÃ¡ÂºÂ¯t
 
-**Lá»±a chá»n: Monolith, tÃ¡ch logic theo package (customer / operation)**
+NÃ¡Â»Ân tÃ¡ÂºÂ£ng Ã„â€˜Ã¡ÂºÂ·t vÃƒÂ© concert online, gÃ¡Â»â€œm 2 luÃ¡Â»â€œng:
+- **Customer-facing**: browse concert, xem loÃ¡ÂºÂ¡i vÃƒÂ©, Ã„â€˜Ã¡ÂºÂ·t vÃƒÂ©, ÃƒÂ¡p voucher, theo dÃƒÂµi trÃ¡ÂºÂ¡ng thÃƒÂ¡i booking
+- **Operation Dashboard**: monitor booking, publish concert/vÃƒÂ©, quÃ¡ÂºÂ£n lÃƒÂ½ voucher (seed-only), xÃ¡Â»Â­ lÃƒÂ½ booking lÃ¡Â»â€”i, cÃ¡ÂºÂ­p nhÃ¡ÂºÂ­t trÃ¡ÂºÂ¡ng thÃƒÂ¡i thÃ¡Â»Â§ cÃƒÂ´ng
 
-LÃ½ do:
-- Traffic Ä‘á»‰nh thá»±c táº¿ chá»‰ ~8â€“9 request/giÃ¢y (300â€“500/phÃºt) â€” khÃ´ng cáº§n microservices hay message queue phá»©c táº¡p
-- Monolith giáº£m Ä‘á»™ phá»©c táº¡p váº­n hÃ nh, phÃ¹ há»£p vá»›i thá»i gian phÃ¡t triá»ƒn giá»›i háº¡n cá»§a bÃ i test
-- Váº«n tÃ¡ch rÃµ rÃ ng á»Ÿ táº§ng code: `controller/customer/...` vÃ  `controller/operation/...`, má»—i nhÃ³m cÃ³ prefix URL riÃªng vÃ  authorization riÃªng theo `role` (Spring Security `@PreAuthorize`)
+**RÃƒÂ ng buÃ¡Â»â„¢c kÃ¡Â»Â¹ thuÃ¡ÂºÂ­t quan trÃ¡Â»Âng:**
+- Traffic Ã„â€˜Ã¡Â»â€°nh: ~50,000 users, 300Ã¢â‚¬â€œ500 booking request/phÃƒÂºt trong flash sale
+- PhÃ¡ÂºÂ£i chÃ¡Â»â€˜ng: oversell vÃƒÂ©, duplicate booking do retry, lÃ¡ÂºÂ¡m dÃ¡Â»Â¥ng voucher, sÃ¡ÂºÂ­p hÃ¡Â»â€¡ thÃ¡Â»â€˜ng khi traffic tÃ„Æ’ng Ã„â€˜Ã¡Â»â„¢t biÃ¡ÂºÂ¿n
+
+---
+
+## 2. KiÃ¡ÂºÂ¿n trÃƒÂºc tÃ¡Â»â€¢ng quan
+
+**LÃ¡Â»Â±a chÃ¡Â»Ân: Monolith, tÃƒÂ¡ch logic theo package (customer / operation)**
+
+LÃƒÂ½ do:
+- Traffic Ã„â€˜Ã¡Â»â€°nh thÃ¡Â»Â±c tÃ¡ÂºÂ¿ chÃ¡Â»â€° ~8Ã¢â‚¬â€œ9 request/giÃƒÂ¢y (300Ã¢â‚¬â€œ500/phÃƒÂºt) Ã¢â‚¬â€ khÃƒÂ´ng cÃ¡ÂºÂ§n microservices hay message queue phÃ¡Â»Â©c tÃ¡ÂºÂ¡p
+- Monolith giÃ¡ÂºÂ£m Ã„â€˜Ã¡Â»â„¢ phÃ¡Â»Â©c tÃ¡ÂºÂ¡p vÃ¡ÂºÂ­n hÃƒÂ nh, phÃƒÂ¹ hÃ¡Â»Â£p vÃ¡Â»â€ºi thÃ¡Â»Âi gian phÃƒÂ¡t triÃ¡Â»Æ’n giÃ¡Â»â€ºi hÃ¡ÂºÂ¡n cÃ¡Â»Â§a bÃƒÂ i test
+- VÃ¡ÂºÂ«n tÃƒÂ¡ch rÃƒÂµ rÃƒÂ ng Ã¡Â»Å¸ tÃ¡ÂºÂ§ng code: `controller/customer/...` vÃƒÂ  `controller/operation/...`, mÃ¡Â»â€”i nhÃƒÂ³m cÃƒÂ³ prefix URL riÃƒÂªng vÃƒÂ  authorization riÃƒÂªng theo `role` (Spring Security `@PreAuthorize`)
 
 **Tech stack:**
 - Backend: Spring Boot 3 + Java 21
@@ -34,7 +34,7 @@ LÃ½ do:
 - API docs: Springdoc OpenAPI (Swagger UI)
 - Testing: JUnit 5 + Postman collection
 
-LÃ½ do chá»n stack: Ä‘Ã£ cÃ³ kinh nghiá»‡m triá»ƒn khai thá»±c táº¿ qua cÃ¡c dá»± Ã¡n trÆ°á»›c (ShiftSync, LinkUp), giáº£m thá»i gian setup, táº­p trung thá»i gian vÃ o pháº§n logic nghiá»‡p vá»¥ cá»‘t lÃµi.
+LÃƒÂ½ do chÃ¡Â»Ân stack: Ã„â€˜ÃƒÂ£ cÃƒÂ³ kinh nghiÃ¡Â»â€¡m triÃ¡Â»Æ’n khai thÃ¡Â»Â±c tÃ¡ÂºÂ¿ qua cÃƒÂ¡c dÃ¡Â»Â± ÃƒÂ¡n trÃ†Â°Ã¡Â»â€ºc (ShiftSync, LinkUp), giÃ¡ÂºÂ£m thÃ¡Â»Âi gian setup, tÃ¡ÂºÂ­p trung thÃ¡Â»Âi gian vÃƒÂ o phÃ¡ÂºÂ§n logic nghiÃ¡Â»â€¡p vÃ¡Â»Â¥ cÃ¡Â»â€˜t lÃƒÂµi.
 
 ---
 
@@ -151,112 +151,112 @@ erDiagram
   }
 ```
 
-### Giáº£i thÃ­ch vai trÃ² tá»«ng báº£ng
+### GiÃ¡ÂºÂ£i thÃƒÂ­ch vai trÃƒÂ² tÃ¡Â»Â«ng bÃ¡ÂºÂ£ng
 
-| Báº£ng | Vai trÃ² |
+| BÃ¡ÂºÂ£ng | Vai trÃƒÂ² |
 |---|---|
-| USERS | TÃ i khoáº£n, phÃ¢n biá»‡t CUSTOMER / OPERATOR / ADMIN qua `role` |
-| REFRESH_TOKENS | Cáº¥p láº¡i access token JWT mÃ  khÃ´ng báº¯t Ä‘Äƒng nháº­p láº¡i; há»— trá»£ logout/thu há»“i |
-| VENUES | Äá»‹a Ä‘iá»ƒm tá»• chá»©c, tÃ¡i sá»­ dá»¥ng cho nhiá»u concert |
-| CONCERTS | Sá»± kiá»‡n concert, `status`: DRAFT / PUBLISHED / CLOSED / CANCELLED |
-| TICKET_CATEGORIES | Loáº¡i vÃ© (VIP/Standard), `type`: SEATED / STANDING â€” trung tÃ¢m cá»§a cÆ¡ cháº¿ chá»‘ng oversell |
-| SEATS | Tá»«ng gháº¿ VIP cá»¥ thá»ƒ, chá»‰ Ã¡p dá»¥ng cho category SEATED |
-| VOUCHERS | MÃ£ giáº£m giÃ¡, giá»›i háº¡n qua `max_usage` / `current_usage` |
-| BOOKINGS | ÄÆ¡n Ä‘áº·t vÃ©, trung tÃ¢m ná»‘i Userâ€“Concertâ€“Voucher, chá»‘ng duplicate qua `idempotency_key` |
-| BOOKING_ITEMS | Chi tiáº¿t tá»«ng vÃ© trong 1 booking (seat_id cho VIP, quantity cho Standard) |
-| PAYMENTS | Tráº¡ng thÃ¡i thanh toÃ¡n, tÃ¡ch riÃªng Ä‘á»ƒ dá»… Ä‘Ã¡nh dáº¥u lÃ  mock |
-| NOTIFICATIONS | ThÃ´ng bÃ¡o trong app |
-| EMAIL_LOGS | Log gá»­i email xÃ¡c nháº­n/hoÃ n tiá»n |
+| USERS | TÃƒÂ i khoÃ¡ÂºÂ£n, phÃƒÂ¢n biÃ¡Â»â€¡t CUSTOMER / OPERATOR / ADMIN qua `role` |
+| REFRESH_TOKENS | CÃ¡ÂºÂ¥p lÃ¡ÂºÂ¡i access token JWT mÃƒÂ  khÃƒÂ´ng bÃ¡ÂºÂ¯t Ã„â€˜Ã„Æ’ng nhÃ¡ÂºÂ­p lÃ¡ÂºÂ¡i; hÃ¡Â»â€” trÃ¡Â»Â£ logout/thu hÃ¡Â»â€œi |
+| VENUES | Ã„ÂÃ¡Â»â€¹a Ã„â€˜iÃ¡Â»Æ’m tÃ¡Â»â€¢ chÃ¡Â»Â©c, tÃƒÂ¡i sÃ¡Â»Â­ dÃ¡Â»Â¥ng cho nhiÃ¡Â»Âu concert |
+| CONCERTS | SÃ¡Â»Â± kiÃ¡Â»â€¡n concert, `status`: DRAFT / PUBLISHED / CLOSED / CANCELLED |
+| TICKET_CATEGORIES | LoÃ¡ÂºÂ¡i vÃƒÂ© (VIP/Standard), `type`: SEATED / STANDING Ã¢â‚¬â€ trung tÃƒÂ¢m cÃ¡Â»Â§a cÃ†Â¡ chÃ¡ÂºÂ¿ chÃ¡Â»â€˜ng oversell |
+| SEATS | TÃ¡Â»Â«ng ghÃ¡ÂºÂ¿ VIP cÃ¡Â»Â¥ thÃ¡Â»Æ’, chÃ¡Â»â€° ÃƒÂ¡p dÃ¡Â»Â¥ng cho category SEATED |
+| VOUCHERS | MÃƒÂ£ giÃ¡ÂºÂ£m giÃƒÂ¡, giÃ¡Â»â€ºi hÃ¡ÂºÂ¡n qua `max_usage` / `current_usage` |
+| BOOKINGS | Ã„ÂÃ†Â¡n Ã„â€˜Ã¡ÂºÂ·t vÃƒÂ©, trung tÃƒÂ¢m nÃ¡Â»â€˜i UserÃ¢â‚¬â€œConcertÃ¢â‚¬â€œVoucher, chÃ¡Â»â€˜ng duplicate qua `idempotency_key` |
+| BOOKING_ITEMS | Chi tiÃ¡ÂºÂ¿t tÃ¡Â»Â«ng vÃƒÂ© trong 1 booking (seat_id cho VIP, quantity cho Standard) |
+| PAYMENTS | TrÃ¡ÂºÂ¡ng thÃƒÂ¡i thanh toÃƒÂ¡n, tÃƒÂ¡ch riÃƒÂªng Ã„â€˜Ã¡Â»Æ’ dÃ¡Â»â€¦ Ã„â€˜ÃƒÂ¡nh dÃ¡ÂºÂ¥u lÃƒÂ  mock |
+| NOTIFICATIONS | ThÃƒÂ´ng bÃƒÂ¡o trong app |
+| EMAIL_LOGS | Log gÃ¡Â»Â­i email xÃƒÂ¡c nhÃ¡ÂºÂ­n/hoÃƒÂ n tiÃ¡Â»Ân |
 
 ---
 
-## 4. PhÃ¢n loáº¡i vÃ©: VIP (SEATED) vs Standard (STANDING)
+## 4. PhÃƒÂ¢n loÃ¡ÂºÂ¡i vÃƒÂ©: VIP (SEATED) vs Standard (STANDING)
 
-| | VIP â€” SEATED | Standard â€” STANDING |
+| | VIP Ã¢â‚¬â€ SEATED | Standard Ã¢â‚¬â€ STANDING |
 |---|---|---|
-| Khi Ä‘áº·t | Chá»n 1 gháº¿ cá»¥ thá»ƒ (seat_id) | Chá»‰ chá»n sá»‘ lÆ°á»£ng (quantity) |
-| Chá»‘ng oversell | Lock tá»«ng dÃ²ng SEATS | Atomic decrement `available_quantity` |
-| BOOKING_ITEMS | `seat_id` cÃ³ giÃ¡ trá»‹, quantity = 1 | `seat_id` = null, quantity > 1 |
+| Khi Ã„â€˜Ã¡ÂºÂ·t | ChÃ¡Â»Ân 1 ghÃ¡ÂºÂ¿ cÃ¡Â»Â¥ thÃ¡Â»Æ’ (seat_id) | ChÃ¡Â»â€° chÃ¡Â»Ân sÃ¡Â»â€˜ lÃ†Â°Ã¡Â»Â£ng (quantity) |
+| ChÃ¡Â»â€˜ng oversell | Lock tÃ¡Â»Â«ng dÃƒÂ²ng SEATS | Atomic decrement `available_quantity` |
+| BOOKING_ITEMS | `seat_id` cÃƒÂ³ giÃƒÂ¡ trÃ¡Â»â€¹, quantity = 1 | `seat_id` = null, quantity > 1 |
 
-NhÃ¡nh ráº½ trong service layer:
+NhÃƒÂ¡nh rÃ¡ÂºÂ½ trong service layer:
 ```java
 if (ticketCategory.getType() == TicketType.SEATED) {
-    // Lock gháº¿ cá»¥ thá»ƒ qua seat_id, kiá»ƒm tra status = AVAILABLE
+    // Lock ghÃ¡ÂºÂ¿ cÃ¡Â»Â¥ thÃ¡Â»Æ’ qua seat_id, kiÃ¡Â»Æ’m tra status = AVAILABLE
 } else { // STANDING
     // UPDATE ticket_categories SET available_quantity = available_quantity - :qty
     // WHERE id = :id AND available_quantity >= :qty
 }
 ```
 
-**Assumption:** má»—i concert seed tá»‘i Ä‘a 2 loáº¡i vÃ© (VIP, Standard). Kiáº¿n trÃºc há»— trá»£ má»Ÿ rá»™ng thÃªm category khÃ¡c nhá» field `type`, nhÆ°ng pháº¡m vi bÃ i test chá»‰ dÃ¹ng 2 loáº¡i nÃ y.
+**Assumption:** mÃ¡Â»â€”i concert seed tÃ¡Â»â€˜i Ã„â€˜a 2 loÃ¡ÂºÂ¡i vÃƒÂ© (VIP, Standard). KiÃ¡ÂºÂ¿n trÃƒÂºc hÃ¡Â»â€” trÃ¡Â»Â£ mÃ¡Â»Å¸ rÃ¡Â»â„¢ng thÃƒÂªm category khÃƒÂ¡c nhÃ¡Â»Â field `type`, nhÃ†Â°ng phÃ¡ÂºÂ¡m vi bÃƒÂ i test chÃ¡Â»â€° dÃƒÂ¹ng 2 loÃ¡ÂºÂ¡i nÃƒÂ y.
 
 ---
 
-## 5. CÆ¡ cháº¿ chá»‘ng Oversell â€” Pessimistic Lock
+## 5. CÃ†Â¡ chÃ¡ÂºÂ¿ chÃ¡Â»â€˜ng Oversell Ã¢â‚¬â€ Pessimistic Lock
 
-**Lá»±a chá»n:** `SELECT ... FOR UPDATE` (Pessimistic Lock), khÃ´ng dÃ¹ng Optimistic Lock (version-based).
+**LÃ¡Â»Â±a chÃ¡Â»Ân:** `SELECT ... FOR UPDATE` (Pessimistic Lock), khÃƒÂ´ng dÃƒÂ¹ng Optimistic Lock (version-based).
 
-### So sÃ¡nh vÃ  lÃ½ do quyáº¿t Ä‘á»‹nh
+### So sÃƒÂ¡nh vÃƒÂ  lÃƒÂ½ do quyÃ¡ÂºÂ¿t Ã„â€˜Ã¡Â»â€¹nh
 
-| TiÃªu chÃ­ | Pessimistic Lock | Optimistic Lock |
+| TiÃƒÂªu chÃƒÂ­ | Pessimistic Lock | Optimistic Lock |
 |---|---|---|
-| Hiá»‡u nÄƒng khi Ã­t conflict | Cháº­m hÆ¡n | Nhanh hÆ¡n |
-| Hiá»‡u nÄƒng khi nhiá»u conflict (flash sale) | á»”n Ä‘á»‹nh, dá»… Ä‘oÃ¡n | Retry storm, tÄƒng táº£i Ä‘Ãºng lÃºc cáº§n á»•n Ä‘á»‹nh nháº¥t |
-| Äá»™ phá»©c táº¡p code | ÄÆ¡n giáº£n, transaction tá»± lo | Phá»©c táº¡p hÆ¡n, pháº£i tá»± viáº¿t retry logic |
-| Äá»™ cháº¯c cháº¯n | ThÃ nh cÃ´ng/tháº¥t báº¡i rÃµ rÃ ng ngay láº§n Ä‘áº§u | CÃ³ thá»ƒ pháº£i thá»­ láº¡i nhiá»u láº§n |
+| HiÃ¡Â»â€¡u nÃ„Æ’ng khi ÃƒÂ­t conflict | ChÃ¡ÂºÂ­m hÃ†Â¡n | Nhanh hÃ†Â¡n |
+| HiÃ¡Â»â€¡u nÃ„Æ’ng khi nhiÃ¡Â»Âu conflict (flash sale) | Ã¡Â»â€n Ã„â€˜Ã¡Â»â€¹nh, dÃ¡Â»â€¦ Ã„â€˜oÃƒÂ¡n | Retry storm, tÃ„Æ’ng tÃ¡ÂºÂ£i Ã„â€˜ÃƒÂºng lÃƒÂºc cÃ¡ÂºÂ§n Ã¡Â»â€¢n Ã„â€˜Ã¡Â»â€¹nh nhÃ¡ÂºÂ¥t |
+| Ã„ÂÃ¡Â»â„¢ phÃ¡Â»Â©c tÃ¡ÂºÂ¡p code | Ã„ÂÃ†Â¡n giÃ¡ÂºÂ£n, transaction tÃ¡Â»Â± lo | PhÃ¡Â»Â©c tÃ¡ÂºÂ¡p hÃ†Â¡n, phÃ¡ÂºÂ£i tÃ¡Â»Â± viÃ¡ÂºÂ¿t retry logic |
+| Ã„ÂÃ¡Â»â„¢ chÃ¡ÂºÂ¯c chÃ¡ÂºÂ¯n | ThÃƒÂ nh cÃƒÂ´ng/thÃ¡ÂºÂ¥t bÃ¡ÂºÂ¡i rÃƒÂµ rÃƒÂ ng ngay lÃ¡ÂºÂ§n Ã„â€˜Ã¡ÂºÂ§u | CÃƒÂ³ thÃ¡Â»Æ’ phÃ¡ÂºÂ£i thÃ¡Â»Â­ lÃ¡ÂºÂ¡i nhiÃ¡Â»Âu lÃ¡ÂºÂ§n |
 
-**LÃ½ do chá»n Pessimistic Lock:**
-1. BÃ i toÃ¡n cÃ³ tÃ­nh cháº¥t "tÃ i nguyÃªn khan hiáº¿m, tranh cháº¥p cao" Ä‘Ãºng lÃºc flash sale â€” ká»‹ch báº£n mÃ  Optimistic Lock hoáº¡t Ä‘á»™ng kÃ©m nháº¥t do tá»· lá»‡ conflict cao.
-2. Traffic thá»±c táº¿ (~8-9 req/giÃ¢y) hoÃ n toÃ n náº±m trong kháº£ nÄƒng xá»­ lÃ½ tá»‘t cá»§a Pessimistic Lock, chÆ°a Ä‘áº¿n má»©c cáº§n cÃ¢n nháº¯c giáº£i phÃ¡p khÃ¡c.
-3. Äáº£m báº£o tÃ­nh Ä‘Ãºng Ä‘áº¯n tuyá»‡t Ä‘á»‘i, dá»… chá»©ng minh vÃ  test â€” quan trá»ng khi thá»i gian phÃ¡t triá»ƒn giá»›i háº¡n.
+**LÃƒÂ½ do chÃ¡Â»Ân Pessimistic Lock:**
+1. BÃƒÂ i toÃƒÂ¡n cÃƒÂ³ tÃƒÂ­nh chÃ¡ÂºÂ¥t "tÃƒÂ i nguyÃƒÂªn khan hiÃ¡ÂºÂ¿m, tranh chÃ¡ÂºÂ¥p cao" Ã„â€˜ÃƒÂºng lÃƒÂºc flash sale Ã¢â‚¬â€ kÃ¡Â»â€¹ch bÃ¡ÂºÂ£n mÃƒÂ  Optimistic Lock hoÃ¡ÂºÂ¡t Ã„â€˜Ã¡Â»â„¢ng kÃƒÂ©m nhÃ¡ÂºÂ¥t do tÃ¡Â»Â· lÃ¡Â»â€¡ conflict cao.
+2. Traffic thÃ¡Â»Â±c tÃ¡ÂºÂ¿ (~8-9 req/giÃƒÂ¢y) hoÃƒÂ n toÃƒÂ n nÃ¡ÂºÂ±m trong khÃ¡ÂºÂ£ nÃ„Æ’ng xÃ¡Â»Â­ lÃƒÂ½ tÃ¡Â»â€˜t cÃ¡Â»Â§a Pessimistic Lock, chÃ†Â°a Ã„â€˜Ã¡ÂºÂ¿n mÃ¡Â»Â©c cÃ¡ÂºÂ§n cÃƒÂ¢n nhÃ¡ÂºÂ¯c giÃ¡ÂºÂ£i phÃƒÂ¡p khÃƒÂ¡c.
+3. Ã„ÂÃ¡ÂºÂ£m bÃ¡ÂºÂ£o tÃƒÂ­nh Ã„â€˜ÃƒÂºng Ã„â€˜Ã¡ÂºÂ¯n tuyÃ¡Â»â€¡t Ã„â€˜Ã¡Â»â€˜i, dÃ¡Â»â€¦ chÃ¡Â»Â©ng minh vÃƒÂ  test Ã¢â‚¬â€ quan trÃ¡Â»Âng khi thÃ¡Â»Âi gian phÃƒÂ¡t triÃ¡Â»Æ’n giÃ¡Â»â€ºi hÃ¡ÂºÂ¡n.
 
-### Ãp dá»¥ng cá»¥ thá»ƒ
+### ÃƒÂp dÃ¡Â»Â¥ng cÃ¡Â»Â¥ thÃ¡Â»Æ’
 
 **VIP (SEATED):**
 ```sql
 SELECT * FROM seats WHERE id = :seatId AND status = 'AVAILABLE' FOR UPDATE;
--- náº¿u láº¥y Ä‘Æ°á»£c row â†’ UPDATE status = 'HELD', held_until = now() + 5 phÃºt
--- náº¿u khÃ´ng láº¥y Ä‘Æ°á»£c (Ä‘ang bá»‹ lock) â†’ bÃ¡o "gháº¿ Ä‘Ã£ Ä‘Æ°á»£c ngÆ°á»i khÃ¡c giá»¯"
+-- nÃ¡ÂºÂ¿u lÃ¡ÂºÂ¥y Ã„â€˜Ã†Â°Ã¡Â»Â£c row Ã¢â€ â€™ UPDATE status = 'HELD', held_until = now() + 5 phÃƒÂºt
+-- nÃ¡ÂºÂ¿u khÃƒÂ´ng lÃ¡ÂºÂ¥y Ã„â€˜Ã†Â°Ã¡Â»Â£c (Ã„â€˜ang bÃ¡Â»â€¹ lock) Ã¢â€ â€™ bÃƒÂ¡o "ghÃ¡ÂºÂ¿ Ã„â€˜ÃƒÂ£ Ã„â€˜Ã†Â°Ã¡Â»Â£c ngÃ†Â°Ã¡Â»Âi khÃƒÂ¡c giÃ¡Â»Â¯"
 ```
 
 **Standard (STANDING):**
 ```sql
 SELECT * FROM ticket_categories WHERE id = :categoryId FOR UPDATE;
--- kiá»ƒm tra available_quantity >= quantity trong cÃ¹ng transaction rá»“i trá»«
+-- kiÃ¡Â»Æ’m tra available_quantity >= quantity trong cÃƒÂ¹ng transaction rÃ¡Â»â€œi trÃ¡Â»Â«
 ```
 
 ---
 
-## 6. CÆ¡ cháº¿ chá»‘ng Duplicate Booking â€” Idempotency Key
+## 6. CÃ†Â¡ chÃ¡ÂºÂ¿ chÃ¡Â»â€˜ng Duplicate Booking Ã¢â‚¬â€ Idempotency Key
 
-**Váº¥n Ä‘á»:** khÃ¡ch báº¥m "Äáº·t vÃ©" nhÆ°ng timeout/máº¡ng cháº­m, báº¥m láº¡i â†’ táº¡o 2 booking trÃ¹ng cho cÃ¹ng 1 yÃªu cáº§u.
+**VÃ¡ÂºÂ¥n Ã„â€˜Ã¡Â»Â:** khÃƒÂ¡ch bÃ¡ÂºÂ¥m "Ã„ÂÃ¡ÂºÂ·t vÃƒÂ©" nhÃ†Â°ng timeout/mÃ¡ÂºÂ¡ng chÃ¡ÂºÂ­m, bÃ¡ÂºÂ¥m lÃ¡ÂºÂ¡i Ã¢â€ â€™ tÃ¡ÂºÂ¡o 2 booking trÃƒÂ¹ng cho cÃƒÂ¹ng 1 yÃƒÂªu cÃ¡ÂºÂ§u.
 
-**Thiáº¿t káº¿:**
+**ThiÃ¡ÂºÂ¿t kÃ¡ÂºÂ¿:**
 
-1. Client tá»± sinh UUID **trÆ°á»›c khi gá»­i request**, gá»­i qua header `Idempotency-Key`. Náº¿u báº¥m láº¡i do timeout, gá»­i láº¡i **cÃ¹ng key Ä‘Ã³**.
-2. RÃ ng buá»™c unique á»Ÿ táº§ng database:
+1. Client tÃ¡Â»Â± sinh UUID **trÃ†Â°Ã¡Â»â€ºc khi gÃ¡Â»Â­i request**, gÃ¡Â»Â­i qua header `Idempotency-Key`. NÃ¡ÂºÂ¿u bÃ¡ÂºÂ¥m lÃ¡ÂºÂ¡i do timeout, gÃ¡Â»Â­i lÃ¡ÂºÂ¡i **cÃƒÂ¹ng key Ã„â€˜ÃƒÂ³**.
+2. RÃƒÂ ng buÃ¡Â»â„¢c unique Ã¡Â»Å¸ tÃ¡ÂºÂ§ng database:
 ```sql
 ALTER TABLE bookings ADD CONSTRAINT uq_idempotency_key UNIQUE (idempotency_key);
 ```
-3. Xá»­ lÃ½ race condition á»Ÿ táº§ng code â€” khÃ´ng chá»‰ SELECT-rá»“i-INSERT, mÃ  báº¯t lá»—i unique violation:
+3. XÃ¡Â»Â­ lÃƒÂ½ race condition Ã¡Â»Å¸ tÃ¡ÂºÂ§ng code Ã¢â‚¬â€ khÃƒÂ´ng chÃ¡Â»â€° SELECT-rÃ¡Â»â€œi-INSERT, mÃƒÂ  bÃ¡ÂºÂ¯t lÃ¡Â»â€”i unique violation:
 ```java
 try {
     Booking booking = bookingRepository.save(newBooking);
 } catch (DataIntegrityViolationException e) {
     Booking existing = bookingRepository.findByIdempotencyKey(key);
-    return existing; // tráº£ vá» booking Ä‘Ã£ tá»“n táº¡i, khÃ´ng táº¡o trÃ¹ng
+    return existing; // trÃ¡ÂºÂ£ vÃ¡Â»Â booking Ã„â€˜ÃƒÂ£ tÃ¡Â»â€œn tÃ¡ÂºÂ¡i, khÃƒÂ´ng tÃ¡ÂºÂ¡o trÃƒÂ¹ng
 }
 ```
 
-**Assumption:** idempotency key hiá»‡n khÃ´ng cÃ³ cÆ¡ cháº¿ háº¿t háº¡n/dá»n dáº¹p tá»± Ä‘á»™ng. Náº¿u triá»ƒn khai production cáº§n thÃªm scheduled job xÃ³a key cÅ© hÆ¡n 24â€“48h.
+**Assumption:** idempotency key hiÃ¡Â»â€¡n khÃƒÂ´ng cÃƒÂ³ cÃ†Â¡ chÃ¡ÂºÂ¿ hÃ¡ÂºÂ¿t hÃ¡ÂºÂ¡n/dÃ¡Â»Ân dÃ¡ÂºÂ¹p tÃ¡Â»Â± Ã„â€˜Ã¡Â»â„¢ng. NÃ¡ÂºÂ¿u triÃ¡Â»Æ’n khai production cÃ¡ÂºÂ§n thÃƒÂªm scheduled job xÃƒÂ³a key cÃ…Â© hÃ†Â¡n 24Ã¢â‚¬â€œ48h.
 
 ---
 
-## 7. CÆ¡ cháº¿ chá»‘ng láº¡m dá»¥ng Voucher â€” Atomic Update
+## 7. CÃ†Â¡ chÃ¡ÂºÂ¿ chÃ¡Â»â€˜ng lÃ¡ÂºÂ¡m dÃ¡Â»Â¥ng Voucher Ã¢â‚¬â€ Atomic Update
 
-**Váº¥n Ä‘á» (Lost Update):** nhiá»u request cÃ¹ng Ä‘á»c `current_usage`, cÃ¹ng cá»™ng dá»“n vÃ  ghi Ä‘Ã¨ lÃªn nhau â†’ sá»‘ lÆ°á»£t dÃ¹ng thá»±c táº¿ bá»‹ "nuá»‘t máº¥t", vÆ°á»£t quÃ¡ `max_usage` mÃ  há»‡ thá»‘ng khÃ´ng phÃ¡t hiá»‡n.
+**VÃ¡ÂºÂ¥n Ã„â€˜Ã¡Â»Â (Lost Update):** nhiÃ¡Â»Âu request cÃƒÂ¹ng Ã„â€˜Ã¡Â»Âc `current_usage`, cÃƒÂ¹ng cÃ¡Â»â„¢ng dÃ¡Â»â€œn vÃƒÂ  ghi Ã„â€˜ÃƒÂ¨ lÃƒÂªn nhau Ã¢â€ â€™ sÃ¡Â»â€˜ lÃ†Â°Ã¡Â»Â£t dÃƒÂ¹ng thÃ¡Â»Â±c tÃ¡ÂºÂ¿ bÃ¡Â»â€¹ "nuÃ¡Â»â€˜t mÃ¡ÂºÂ¥t", vÃ†Â°Ã¡Â»Â£t quÃƒÂ¡ `max_usage` mÃƒÂ  hÃ¡Â»â€¡ thÃ¡Â»â€˜ng khÃƒÂ´ng phÃƒÂ¡t hiÃ¡Â»â€¡n.
 
-**Giáº£i phÃ¡p:** gá»™p Ä‘á»c vÃ  ghi thÃ nh 1 cÃ¢u lá»‡nh atomic táº¡i database, khÃ´ng tÃ¡ch thÃ nh 2 bÆ°á»›c á»Ÿ táº§ng application:
+**GiÃ¡ÂºÂ£i phÃƒÂ¡p:** gÃ¡Â»â„¢p Ã„â€˜Ã¡Â»Âc vÃƒÂ  ghi thÃƒÂ nh 1 cÃƒÂ¢u lÃ¡Â»â€¡nh atomic tÃ¡ÂºÂ¡i database, khÃƒÂ´ng tÃƒÂ¡ch thÃƒÂ nh 2 bÃ†Â°Ã¡Â»â€ºc Ã¡Â»Å¸ tÃ¡ÂºÂ§ng application:
 ```sql
 UPDATE vouchers
 SET current_usage = current_usage + 1
@@ -273,11 +273,11 @@ int applyVoucher(@Param("id") UUID voucherId);
 ```java
 int rowsAffected = voucherRepository.applyVoucher(voucherId);
 if (rowsAffected == 0) {
-    throw new VoucherLimitExceededException("Voucher Ä‘Ã£ háº¿t lÆ°á»£t sá»­ dá»¥ng");
+    throw new VoucherLimitExceededException("Voucher Ã„â€˜ÃƒÂ£ hÃ¡ÂºÂ¿t lÃ†Â°Ã¡Â»Â£t sÃ¡Â»Â­ dÃ¡Â»Â¥ng");
 }
 ```
 
-`rowsAffected == 0` nghÄ©a lÃ  Ä‘iá»u kiá»‡n sai táº¡i thá»i Ä‘iá»ƒm ghi (Ä‘Ã£ háº¿t slot) â†’ tá»« chá»‘i ngay. Voucher Ä‘Æ°á»£c apply trong cÃ¹ng transaction vá»›i bÆ°á»›c lock gháº¿/trá»« vÃ© â€” náº¿u bÆ°á»›c nÃ o fail thÃ¬ rollback toÃ n bá»™.
+`rowsAffected == 0` nghÃ„Â©a lÃƒÂ  Ã„â€˜iÃ¡Â»Âu kiÃ¡Â»â€¡n sai tÃ¡ÂºÂ¡i thÃ¡Â»Âi Ã„â€˜iÃ¡Â»Æ’m ghi (Ã„â€˜ÃƒÂ£ hÃ¡ÂºÂ¿t slot) Ã¢â€ â€™ tÃ¡Â»Â« chÃ¡Â»â€˜i ngay. Voucher Ã„â€˜Ã†Â°Ã¡Â»Â£c apply trong cÃƒÂ¹ng transaction vÃ¡Â»â€ºi bÃ†Â°Ã¡Â»â€ºc lock ghÃ¡ÂºÂ¿/trÃ¡Â»Â« vÃƒÂ© Ã¢â‚¬â€ nÃ¡ÂºÂ¿u bÃ†Â°Ã¡Â»â€ºc nÃƒÂ o fail thÃƒÂ¬ rollback toÃƒÂ n bÃ¡Â»â„¢.
 
 ---
 
@@ -286,70 +286,70 @@ if (rowsAffected == 0) {
 ### 8.1 Booking
 
 ```
-Received â†’ Pending payment â†’ Completed         (thanh toÃ¡n thÃ nh cÃ´ng)
-                            â†’ Expired            (háº¿t 5 phÃºt chÆ°a thanh toÃ¡n)
-                            â†’ Failed              (thanh toÃ¡n lá»—i)
-Completed â†’ Refunded                              (chá»‰ khi operator há»§y toÃ n bá»™ concert â€” bulk refund)
+Received Ã¢â€ â€™ Pending payment Ã¢â€ â€™ Completed         (thanh toÃƒÂ¡n thÃƒÂ nh cÃƒÂ´ng)
+                            Ã¢â€ â€™ Expired            (hÃ¡ÂºÂ¿t 5 phÃƒÂºt chÃ†Â°a thanh toÃƒÂ¡n)
+                            Ã¢â€ â€™ Failed              (thanh toÃƒÂ¡n lÃ¡Â»â€”i)
+Completed Ã¢â€ â€™ Refunded                              (chÃ¡Â»â€° khi operator hÃ¡Â»Â§y toÃƒÂ n bÃ¡Â»â„¢ concert Ã¢â‚¬â€ bulk refund)
 ```
 
-**Assumption quan trá»ng:** há»‡ thá»‘ng khÃ´ng há»— trá»£ khÃ¡ch hÃ ng tá»± há»§y/yÃªu cáº§u hoÃ n tiá»n booking Ä‘Æ¡n láº» (chÃ­nh sÃ¡ch "no refund, no cancel" Ä‘Ãºng thá»±c táº¿ ngÃ nh ticketing). `Refunded` chá»‰ xáº£y ra khi operator há»§y toÃ n bá»™ concert, Ã¡p dá»¥ng hÃ ng loáº¡t cho cÃ¡c booking Ä‘Ã£ `Completed`.
+**Assumption quan trÃ¡Â»Âng:** hÃ¡Â»â€¡ thÃ¡Â»â€˜ng khÃƒÂ´ng hÃ¡Â»â€” trÃ¡Â»Â£ khÃƒÂ¡ch hÃƒÂ ng tÃ¡Â»Â± hÃ¡Â»Â§y/yÃƒÂªu cÃ¡ÂºÂ§u hoÃƒÂ n tiÃ¡Â»Ân booking Ã„â€˜Ã†Â¡n lÃ¡ÂºÂ» (chÃƒÂ­nh sÃƒÂ¡ch "no refund, no cancel" Ã„â€˜ÃƒÂºng thÃ¡Â»Â±c tÃ¡ÂºÂ¿ ngÃƒÂ nh ticketing). `Refunded` chÃ¡Â»â€° xÃ¡ÂºÂ£y ra khi operator hÃ¡Â»Â§y toÃƒÂ n bÃ¡Â»â„¢ concert, ÃƒÂ¡p dÃ¡Â»Â¥ng hÃƒÂ ng loÃ¡ÂºÂ¡t cho cÃƒÂ¡c booking Ã„â€˜ÃƒÂ£ `Completed`.
 
-### 8.2 Seat (chá»‰ Ã¡p dá»¥ng cho vÃ© VIP â€” SEATED)
+### 8.2 Seat (chÃ¡Â»â€° ÃƒÂ¡p dÃ¡Â»Â¥ng cho vÃƒÂ© VIP Ã¢â‚¬â€ SEATED)
 
 ```
-Available â†’ Held (giá»¯ 5 phÃºt, khi khÃ¡ch chá»n gháº¿)
-Held â†’ Booked (khi thanh toÃ¡n xong)
-Held â†’ Available (tá»± Ä‘á»™ng, khi háº¿t 5 phÃºt â€” do Scheduled Job xá»­ lÃ½)
+Available Ã¢â€ â€™ Held (giÃ¡Â»Â¯ 5 phÃƒÂºt, khi khÃƒÂ¡ch chÃ¡Â»Ân ghÃ¡ÂºÂ¿)
+Held Ã¢â€ â€™ Booked (khi thanh toÃƒÂ¡n xong)
+Held Ã¢â€ â€™ Available (tÃ¡Â»Â± Ã„â€˜Ã¡Â»â„¢ng, khi hÃ¡ÂºÂ¿t 5 phÃƒÂºt Ã¢â‚¬â€ do Scheduled Job xÃ¡Â»Â­ lÃƒÂ½)
 ```
 
-### 8.3 Má»‘i liÃªn káº¿t giá»¯a 2 state machine
+### 8.3 MÃ¡Â»â€˜i liÃƒÂªn kÃ¡ÂºÂ¿t giÃ¡Â»Â¯a 2 state machine
 
-| Booking chuyá»ƒn | Seat/Ticket category tÆ°Æ¡ng á»©ng |
+| Booking chuyÃ¡Â»Æ’n | Seat/Ticket category tÃ†Â°Ã†Â¡ng Ã¡Â»Â©ng |
 |---|---|
-| Received â†’ Pending payment | Seat: Available â†’ Held (VIP) / trá»« available_quantity (Standard) |
-| â†’ Completed | Seat: Held â†’ Booked |
-| â†’ Expired / Failed | Seat: Held â†’ Available (nháº£ láº¡i) / cá»™ng tráº£ available_quantity |
+| Received Ã¢â€ â€™ Pending payment | Seat: Available Ã¢â€ â€™ Held (VIP) / trÃ¡Â»Â« available_quantity (Standard) |
+| Ã¢â€ â€™ Completed | Seat: Held Ã¢â€ â€™ Booked |
+| Ã¢â€ â€™ Expired / Failed | Seat: Held Ã¢â€ â€™ Available (nhÃ¡ÂºÂ£ lÃ¡ÂºÂ¡i) / cÃ¡Â»â„¢ng trÃ¡ÂºÂ£ available_quantity |
 
-### 8.4 CÆ¡ cháº¿ tá»± Ä‘á»™ng nháº£ gháº¿ sau 5 phÃºt
+### 8.4 CÃ†Â¡ chÃ¡ÂºÂ¿ tÃ¡Â»Â± Ã„â€˜Ã¡Â»â„¢ng nhÃ¡ÂºÂ£ ghÃ¡ÂºÂ¿ sau 5 phÃƒÂºt
 
-**Chá»n: Scheduled Job** (thay vÃ¬ Redis TTL + keyspace notification).
+**ChÃ¡Â»Ân: Scheduled Job** (thay vÃƒÂ¬ Redis TTL + keyspace notification).
 
-LÃ½ do: Ä‘Æ¡n giáº£n hÆ¡n Ä‘á»ƒ implement vÃ  giáº£i thÃ­ch trong thá»i gian giá»›i háº¡n, Ä‘á»§ chÃ­nh xÃ¡c cho scope bÃ i test (Ä‘á»™ trá»… tá»‘i Ä‘a ~1 phÃºt khÃ´ng pháº£i váº¥n Ä‘á» lá»›n á»Ÿ quy mÃ´ traffic nÃ y). ÄÃ£ cÃ¢n nháº¯c Redis TTL (cÃ³ kinh nghiá»‡m tá»« dá»± Ã¡n ShiftSync) nhÆ°ng chá»n Scheduled Job vÃ¬ Ä‘Æ¡n giáº£n vÃ  Ä‘á»§ Ä‘Ã¡p á»©ng scale bÃ i toÃ¡n.
+LÃƒÂ½ do: Ã„â€˜Ã†Â¡n giÃ¡ÂºÂ£n hÃ†Â¡n Ã„â€˜Ã¡Â»Æ’ implement vÃƒÂ  giÃ¡ÂºÂ£i thÃƒÂ­ch trong thÃ¡Â»Âi gian giÃ¡Â»â€ºi hÃ¡ÂºÂ¡n, Ã„â€˜Ã¡Â»Â§ chÃƒÂ­nh xÃƒÂ¡c cho scope bÃƒÂ i test (Ã„â€˜Ã¡Â»â„¢ trÃ¡Â»â€¦ tÃ¡Â»â€˜i Ã„â€˜a ~1 phÃƒÂºt khÃƒÂ´ng phÃ¡ÂºÂ£i vÃ¡ÂºÂ¥n Ã„â€˜Ã¡Â»Â lÃ¡Â»â€ºn Ã¡Â»Å¸ quy mÃƒÂ´ traffic nÃƒÂ y). Ã„ÂÃƒÂ£ cÃƒÂ¢n nhÃ¡ÂºÂ¯c Redis TTL (cÃƒÂ³ kinh nghiÃ¡Â»â€¡m tÃ¡Â»Â« dÃ¡Â»Â± ÃƒÂ¡n ShiftSync) nhÃ†Â°ng chÃ¡Â»Ân Scheduled Job vÃƒÂ¬ Ã„â€˜Ã†Â¡n giÃ¡ÂºÂ£n vÃƒÂ  Ã„â€˜Ã¡Â»Â§ Ã„â€˜ÃƒÂ¡p Ã¡Â»Â©ng scale bÃƒÂ i toÃƒÂ¡n.
 
 ```java
-@Scheduled(fixedRate = 60000) // cháº¡y má»—i 1 phÃºt
+@Scheduled(fixedRate = 60000) // chÃ¡ÂºÂ¡y mÃ¡Â»â€”i 1 phÃƒÂºt
 public void releaseExpiredHolds() {
-    // QuÃ©t SEATS cÃ³ status = HELD vÃ  held_until < now()
-    // â†’ set status = AVAILABLE, held_by_booking_id = null
-    // â†’ set booking liÃªn quan sang status = EXPIRED
+    // QuÃƒÂ©t SEATS cÃƒÂ³ status = HELD vÃƒÂ  held_until < now()
+    // Ã¢â€ â€™ set status = AVAILABLE, held_by_booking_id = null
+    // Ã¢â€ â€™ set booking liÃƒÂªn quan sang status = EXPIRED
 }
 ```
 
 ---
 
-## 9. Luá»“ng xá»­ lÃ½ chÃ­nh
+## 9. LuÃ¡Â»â€œng xÃ¡Â»Â­ lÃƒÂ½ chÃƒÂ­nh
 
-### 9.1 Customer â€” Ä‘áº·t vÃ©
+### 9.1 Customer Ã¢â‚¬â€ Ã„â€˜Ã¡ÂºÂ·t vÃƒÂ©
 ```
-Xem concert â†’ Chá»n loáº¡i vÃ©
-  â†’ VIP: chá»n gháº¿ cá»¥ thá»ƒ
-  â†’ Standard: chá»n sá»‘ lÆ°á»£ng
-â†’ Táº¡o booking (idempotency key, lock gháº¿/vÃ© trong transaction)
-â†’ Ãp voucher (tÃ¹y chá»n, atomic update)
-â†’ Thanh toÃ¡n trong 5 phÃºt
+Xem concert Ã¢â€ â€™ ChÃ¡Â»Ân loÃ¡ÂºÂ¡i vÃƒÂ©
+  Ã¢â€ â€™ VIP: chÃ¡Â»Ân ghÃ¡ÂºÂ¿ cÃ¡Â»Â¥ thÃ¡Â»Æ’
+  Ã¢â€ â€™ Standard: chÃ¡Â»Ân sÃ¡Â»â€˜ lÃ†Â°Ã¡Â»Â£ng
+Ã¢â€ â€™ TÃ¡ÂºÂ¡o booking (idempotency key, lock ghÃ¡ÂºÂ¿/vÃƒÂ© trong transaction)
+Ã¢â€ â€™ ÃƒÂp voucher (tÃƒÂ¹y chÃ¡Â»Ân, atomic update)
+Ã¢â€ â€™ Thanh toÃƒÂ¡n trong 5 phÃƒÂºt
 ```
 
-### 9.2 Operation â€” váº­n hÃ nh
+### 9.2 Operation Ã¢â‚¬â€ vÃ¡ÂºÂ­n hÃƒÂ nh
 ```
-Publish concert / táº¡o loáº¡i vÃ©
-Xem danh sÃ¡ch booking, filter theo tráº¡ng thÃ¡i
-Update tráº¡ng thÃ¡i thá»§ cÃ´ng (xÃ¡c nháº­n thanh toÃ¡n thá»§ cÃ´ng / Ä‘Ã¡nh dáº¥u nghi váº¥n gian láº­n)
-Há»§y concert â†’ bulk refund tá»± Ä‘á»™ng cho cÃ¡c booking Completed
+Publish concert / tÃ¡ÂºÂ¡o loÃ¡ÂºÂ¡i vÃƒÂ©
+Xem danh sÃƒÂ¡ch booking, filter theo trÃ¡ÂºÂ¡ng thÃƒÂ¡i
+Update trÃ¡ÂºÂ¡ng thÃƒÂ¡i thÃ¡Â»Â§ cÃƒÂ´ng (xÃƒÂ¡c nhÃ¡ÂºÂ­n thanh toÃƒÂ¡n thÃ¡Â»Â§ cÃƒÂ´ng / Ã„â€˜ÃƒÂ¡nh dÃ¡ÂºÂ¥u nghi vÃ¡ÂºÂ¥n gian lÃ¡ÂºÂ­n)
+HÃ¡Â»Â§y concert Ã¢â€ â€™ bulk refund tÃ¡Â»Â± Ã„â€˜Ã¡Â»â„¢ng cho cÃƒÂ¡c booking Completed
 ```
 
 ---
 
-## 10. Danh sÃ¡ch API endpoints
+## 10. Danh sÃƒÂ¡ch API endpoints
 
 ### Customer-facing (`/api/v1/customer`)
 
@@ -359,7 +359,7 @@ Há»§y concert â†’ bulk refund tá»± Ä‘á»™ng cho cÃ¡c booking 
 - `POST /auth/refresh`
 - `POST /auth/logout`
 
-**Concert & vÃ©**
+**Concert & vÃƒÂ©**
 - `GET /concerts`
 - `GET /concerts/{id}`
 - `GET /concerts/{id}/seats`
@@ -396,26 +396,26 @@ Há»§y concert â†’ bulk refund tá»± Ä‘á»™ng cho cÃ¡c booking 
 - `PUT /bookings/{id}/status`
 
 **Voucher**
-- `GET /vouchers` (chá»‰ xem, khÃ´ng CRUD â€” seed-only)
+- `GET /vouchers` (chÃ¡Â»â€° xem, khÃƒÂ´ng CRUD Ã¢â‚¬â€ seed-only)
 
 ---
 
-## 11. TÃ³m táº¯t Assumptions / Scope
+## 11. TÃƒÂ³m tÃ¡ÂºÂ¯t Assumptions / Scope
 
-**ÄÃ£ lÃ m (in scope):**
-- Kiáº¿n trÃºc monolith, tÃ¡ch logic theo package customer/operation
-- Chá»‘ng oversell báº±ng Pessimistic Lock cho cáº£ 2 loáº¡i vÃ© (SEATED/STANDING)
-- Chá»‘ng duplicate booking báº±ng idempotency key (unique constraint + exception handling)
-- Chá»‘ng láº¡m dá»¥ng voucher báº±ng atomic UPDATE
-- CÆ¡ cháº¿ giá»¯ gháº¿ VIP 5 phÃºt, tá»± Ä‘á»™ng nháº£ qua Scheduled Job
-- State machine Ä‘áº§y Ä‘á»§ cho Booking (5 tráº¡ng thÃ¡i + Refunded) vÃ  Seat (3 tráº¡ng thÃ¡i)
-- Bulk refund khi operator há»§y concert
+**Ã„ÂÃƒÂ£ lÃƒÂ m (in scope):**
+- KiÃ¡ÂºÂ¿n trÃƒÂºc monolith, tÃƒÂ¡ch logic theo package customer/operation
+- ChÃ¡Â»â€˜ng oversell bÃ¡ÂºÂ±ng Pessimistic Lock cho cÃ¡ÂºÂ£ 2 loÃ¡ÂºÂ¡i vÃƒÂ© (SEATED/STANDING)
+- ChÃ¡Â»â€˜ng duplicate booking bÃ¡ÂºÂ±ng idempotency key (unique constraint + exception handling)
+- ChÃ¡Â»â€˜ng lÃ¡ÂºÂ¡m dÃ¡Â»Â¥ng voucher bÃ¡ÂºÂ±ng atomic UPDATE
+- CÃ†Â¡ chÃ¡ÂºÂ¿ giÃ¡Â»Â¯ ghÃ¡ÂºÂ¿ VIP 5 phÃƒÂºt, tÃ¡Â»Â± Ã„â€˜Ã¡Â»â„¢ng nhÃ¡ÂºÂ£ qua Scheduled Job
+- State machine Ã„â€˜Ã¡ÂºÂ§y Ã„â€˜Ã¡Â»Â§ cho Booking (5 trÃ¡ÂºÂ¡ng thÃƒÂ¡i + Refunded) vÃƒÂ  Seat (3 trÃ¡ÂºÂ¡ng thÃƒÂ¡i)
+- Bulk refund khi operator hÃ¡Â»Â§y concert
 
-**ChÆ°a lÃ m (out of scope, cÃ³ thá»ƒ má»Ÿ rá»™ng sau):**
-- CRUD voucher tá»« operation dashboard â€” chá»‰ seed data qua Flyway migration
-- TÃ­ch há»£p cá»•ng thanh toÃ¡n tháº­t (VNPay, Momo...) â€” chá»‰ mock
-- KhÃ¡ch hÃ ng tá»± há»§y/yÃªu cáº§u hoÃ n tiá»n booking Ä‘Æ¡n láº» â€” chÃ­nh sÃ¡ch no refund, no cancel
-- CÆ¡ cháº¿ háº¿t háº¡n/dá»n dáº¹p tá»± Ä‘á»™ng cho idempotency key
-- Redis TTL cho viá»‡c nháº£ gháº¿ (Ä‘Ã£ cÃ¢n nháº¯c, chá»n Scheduled Job vÃ¬ Ä‘Æ¡n giáº£n hÆ¡n vÃ  Ä‘á»§ Ä‘Ã¡p á»©ng scale)
-- Real-time push notification â€” Notification chá»‰ lÆ°u record, khÃ´ng cÃ³ WebSocket/SignalR
-- Rate limiting nÃ¢ng cao á»Ÿ táº§ng API gateway
+**ChÃ†Â°a lÃƒÂ m (out of scope, cÃƒÂ³ thÃ¡Â»Æ’ mÃ¡Â»Å¸ rÃ¡Â»â„¢ng sau):**
+- CRUD voucher tÃ¡Â»Â« operation dashboard Ã¢â‚¬â€ chÃ¡Â»â€° seed data qua Flyway migration
+- TÃƒÂ­ch hÃ¡Â»Â£p cÃ¡Â»â€¢ng thanh toÃƒÂ¡n thÃ¡ÂºÂ­t (VNPay, Momo...) Ã¢â‚¬â€ chÃ¡Â»â€° mock
+- KhÃƒÂ¡ch hÃƒÂ ng tÃ¡Â»Â± hÃ¡Â»Â§y/yÃƒÂªu cÃ¡ÂºÂ§u hoÃƒÂ n tiÃ¡Â»Ân booking Ã„â€˜Ã†Â¡n lÃ¡ÂºÂ» Ã¢â‚¬â€ chÃƒÂ­nh sÃƒÂ¡ch no refund, no cancel
+- CÃ†Â¡ chÃ¡ÂºÂ¿ hÃ¡ÂºÂ¿t hÃ¡ÂºÂ¡n/dÃ¡Â»Ân dÃ¡ÂºÂ¹p tÃ¡Â»Â± Ã„â€˜Ã¡Â»â„¢ng cho idempotency key
+- Redis TTL cho viÃ¡Â»â€¡c nhÃ¡ÂºÂ£ ghÃ¡ÂºÂ¿ (Ã„â€˜ÃƒÂ£ cÃƒÂ¢n nhÃ¡ÂºÂ¯c, chÃ¡Â»Ân Scheduled Job vÃƒÂ¬ Ã„â€˜Ã†Â¡n giÃ¡ÂºÂ£n hÃ†Â¡n vÃƒÂ  Ã„â€˜Ã¡Â»Â§ Ã„â€˜ÃƒÂ¡p Ã¡Â»Â©ng scale)
+- Real-time push notification Ã¢â‚¬â€ Notification chÃ¡Â»â€° lÃ†Â°u record, khÃƒÂ´ng cÃƒÂ³ WebSocket/SignalR
+- Rate limiting nÃƒÂ¢ng cao Ã¡Â»Å¸ tÃ¡ÂºÂ§ng API gateway
