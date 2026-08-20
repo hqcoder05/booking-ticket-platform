@@ -1,60 +1,60 @@
-# Concert Ticket Booking Platform
+# Hệ thống Đặt vé Sự kiện (Concert Ticket Booking Platform)
 
-This project is the backend assessment for the Product Backend Engineer position. It provides a robust, concurrency-safe API for customer booking workflows and internal operation workflows.
+Đây là dự án backend phục vụ cho bài Assessment vị trí Product Backend Engineer. Hệ thống cung cấp các RESTful API an toàn, xử lý concurrency tốt, phục vụ cho hai luồng nghiệp vụ chính: Khách hàng (Customer booking workflows) và Vận hành nội bộ (Internal operation workflows).
 
-## 1. How to Setup & Run in Local
+## 1. Hướng dẫn Cài đặt & Chạy dự án Local
 
-### Prerequisites
+### Yêu cầu môi trường (Prerequisites)
 - Java 21
 - Maven
 - Docker & Docker Compose
 
-### Running the Application
-1. **Start the Database (PostgreSQL):**
+### Khởi chạy Ứng dụng
+1. **Khởi động Database (PostgreSQL):**
    `ash
    docker-compose up -d
    `
-2. **Run the Spring Boot Application:**
+2. **Chạy ứng dụng Spring Boot:**
    `ash
    ./mvnw spring-boot:run
    `
-   *Note: Flyway will automatically run database migrations (creating tables and seeding initial data including venues, concerts, and promotional vouchers).*
+   *Lưu ý: Flyway sẽ tự động chạy các script migrations để tạo bảng và seed dữ liệu ban đầu (bao gồm venues, concerts, và promotional vouchers).*
 
-## 2. API Documents & Testing Collections
+## 2. Tài liệu API & Bộ kiểm thử (API Documents & Testing)
 
 ### Swagger OpenAPI
-Once the application is running, the interactive API documentation is available at:
+Sau khi ứng dụng chạy thành công, tài liệu API tương tác trực tiếp có thể truy cập tại:
 - **URL:** http://localhost:8080/swagger-ui.html
 
 ### Postman Collection
-An API testing collection is included in the root directory: postman_collection.json.
-- **How to use:** Import this file into Postman.
-- **Automation:** The collection is configured with Pre-request scripts. When you call the Login API, it automatically extracts the JWT token and sets it as the {{token}} variable for subsequent requests.
+Bộ API testing collection đã được đính kèm ở thư mục gốc của dự án: postman_collection.json.
+- **Cách sử dụng:** Import file này vào Postman.
+- **Tự động hóa:** Collection đã được setup sẵn các Pre-request scripts. Khi bạn gọi API Login, nó sẽ tự động lấy JWT Token và gán vào biến môi trường {{token}} cho các request tiếp theo.
 
-## 3. Coding Guideline & Convention
+## 3. Quy chuẩn Code (Coding Guideline & Convention)
 
-### Code Structure
-The codebase follows a Domain-Driven Monolith architecture, separated by business workflows:
-- com.booking_ticket_platform.customer: Endpoints and logic strictly for end-users.
-- com.booking_ticket_platform.operation: Endpoints and logic strictly for internal admins/operators.
-- com.booking_ticket_platform.shared: Shared configurations, exceptions, and base DTOs.
+### Cấu trúc dự án (Code Structure)
+Mã nguồn tuân theo kiến trúc Domain-Driven Monolith, phân tách rạch ròi theo luồng nghiệp vụ:
+- com.booking_ticket_platform.customer: Chứa các API và logic dành riêng cho end-user.
+- com.booking_ticket_platform.operation: Chứa các API và logic dành riêng cho admin/operator nội bộ.
+- com.booking_ticket_platform.shared: Chứa các config, exceptions, và base DTOs dùng chung.
 
-### How to Code a New API
-1. **Controller Layer:** Define the endpoint in the respective workflow package (e.g., CustomerBookingController). Use @PreAuthorize for Role-Based Access Control. Always return data wrapped in ApiResponse<T>.
-2. **DTO Layer:** Create specific Request and Response DTOs. Never expose raw Entities to the client.
-3. **Service Layer:** Implement business logic here. Apply @Transactional boundaries carefully. If the API modifies critical state (like inventory), use Pessimistic Locks on the Repository level.
-4. **Repository Layer:** Use Spring Data JPA. Keep queries optimized.
+### Hướng dẫn tạo API mới (How to Code a New API)
+1. **Controller Layer:** Định nghĩa endpoint tại package nghiệp vụ tương ứng (VD: CustomerBookingController). Sử dụng @PreAuthorize để phân quyền Role-Based Access Control. Luôn trả về dữ liệu được bọc trong class ApiResponse<T>.
+2. **DTO Layer:** Tạo các class Request và Response DTO cụ thể. Tuyệt đối không expose raw Entities ra ngoài API.
+3. **Service Layer:** Triển khai business logic tại đây. Áp dụng @Transactional để gom nhóm các thao tác. Nếu API có làm thay đổi trạng thái nhạy cảm (như inventory ghế), bắt buộc dùng Pessimistic Locks ở tầng Repository.
+4. **Repository Layer:** Sử dụng Spring Data JPA. Giữ các câu query được tối ưu hóa.
 
-### How to Write & Run Unit Tests
+### Hướng dẫn viết và chạy Unit Test
 - **Frameworks:** JUnit 5, Mockito.
-- **Command to run tests:**
+- **Lệnh chạy test:**
   `ash
   ./mvnw test
   `
-- **Convention:** Write unit tests for business logic (Services) and integration tests for concurrency issues (using ExecutorService and CountDownLatch to simulate multiple threads accessing the same resource). See BookingServiceConcurrencyTest.java for reference.
+- **Convention:** Viết unit test cho các business logic (Services) và viết integration test cho các vấn đề concurrency (sử dụng ExecutorService và CountDownLatch để giả lập nhiều threads cùng truy cập vào một resource). Tham khảo file BookingServiceConcurrencyTest.java.
 
-## 4. System Design & Assumptions
-Please refer to the deeply detailed **[system-design.md](./system-design.md)** file. It answers the core requirements:
-- How I think about backend design.
-- How I reason about possible issues (Overselling, Duplicates, Flash Sale).
-- My assumptions, what is IN scope, and what is OUT of scope.
+## 4. Thiết kế Hệ thống & Các Giả định
+Vui lòng tham khảo tài liệu chi tiết tại **[system-design.md](./system-design.md)**. Tài liệu này sẽ trả lời các yêu cầu cốt lõi của bài test:
+- Tư duy thiết kế Backend của tôi.
+- Cách tôi giải quyết các vấn đề hóc búa (Overselling, Duplicates, Flash Sale).
+- Các giả định, phạm vi những gì ĐÃ LÀM (In scope) và KHÔNG LÀM (Out of scope).
