@@ -56,6 +56,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
     }
 
+    // Handle IllegalStateException
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalStateException(IllegalStateException exception) {
+        ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message(exception.getMessage())
+                .timestamp(OffsetDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    }
+
     //4. Bat loi khong tim thay resource hoac API
     @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNoResourceFoundException(org.springframework.web.servlet.resource.NoResourceFoundException exception) {

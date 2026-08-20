@@ -51,6 +51,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/customer/concerts/**").permitAll()
                 .requestMatchers("/api/operation/**").hasAnyRole("ADMIN", "OPERATOR")
                 .requestMatchers("/api/customer/**").hasAnyRole("CUSTOMER", "ADMIN")
                 .anyRequest().authenticated()
