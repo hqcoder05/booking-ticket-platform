@@ -18,7 +18,7 @@
    ```bash
    ./mvnw spring-boot:run
    ```
-   *Lưu ý: Flyway sẽ tự động chạy các script migrations để tạo bảng và seed dữ liệu ban đầu (bao gồm users, venues, concerts, ticket categories, seats, và vouchers).*
+   *Lưu ý: Flyway sẽ tự động tạo bảng (schema). Sau đó, `DataSeeder` (CommandLineRunner) sẽ kiểm tra và tự động seed dữ liệu mẫu nếu database trống (users, venues, concerts, seats, vouchers). Cơ chế này đảm bảo dữ liệu luôn được khôi phục dù bạn restart server bao nhiêu lần.*
 
 ### Tài khoản Test có sẵn trong hệ thống
 
