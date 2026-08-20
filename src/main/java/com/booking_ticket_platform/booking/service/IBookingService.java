@@ -9,4 +9,6 @@ import java.util.UUID;
 public interface IBookingService {
     BookingDTO createBooking(UUID userId, BookingRequest request);
     List<BookingDTO> getMyBookings(UUID userId);
+    List<BookingDTO> getAllBookingsForOperation(String status, UUID concertId);
+    BookingDTO updateBookingStatus(UUID bookingId, String newStatus);
 }

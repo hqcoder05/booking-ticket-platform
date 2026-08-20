@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.booking_ticket_platform.payment.repository.IVoucherRepository;
+import com.booking_ticket_platform.payment.entity.Voucher;
+
 @Service
 public class BookingService implements IBookingService {
 
@@ -34,19 +37,22 @@ public class BookingService implements IBookingService {
     private final ITicketCategoryRepository ticketCategoryRepository;
     private final IConcertRepository concertRepository;
     private final UserRepository userRepository;
+    private final IVoucherRepository voucherRepository;
 
     public BookingService(IBookingRepository bookingRepository,
                           IBookingDetailRepository bookingDetailRepository,
                           ISeatRepository seatRepository,
                           ITicketCategoryRepository ticketCategoryRepository,
                           IConcertRepository concertRepository,
-                          UserRepository userRepository) {
+                          UserRepository userRepository,
+                          IVoucherRepository voucherRepository) {
         this.bookingRepository = bookingRepository;
         this.bookingDetailRepository = bookingDetailRepository;
         this.seatRepository = seatRepository;
         this.ticketCategoryRepository = ticketCategoryRepository;
         this.concertRepository = concertRepository;
         this.userRepository = userRepository;
+        this.voucherRepository = voucherRepository;
     }
 
     @Override
@@ -143,6 +149,31 @@ public class BookingService implements IBookingService {
             throw new IllegalArgumentException("Booking must contain at least one ticket");
         }
 
+        // 3. Process Voucher (Pessimistic Lock)
+        if (request.getVoucherCode() != null && !request.getVoucherCode().isBlank()) {
+            Voucher voucher = voucherRepository.findByCodeForUpdate(request.getVoucherCode())
+                    .orElseThrow(() -> new ResourceNotFoundException("Voucher not found"));
+
+            if (voucher.getCurrentUsage() >= voucher.getMaxUsage()) {
+                throw new IllegalStateException("Voucher has reached its usage limit");
+            }
+
+            // Calculate discount
+            if ("PERCENTAGE".equalsIgnoreCase(voucher.getDiscountType())) {
+                BigDecimal discount = totalAmount.multiply(voucher.getDiscountValue()).divide(BigDecimal.valueOf(100));
+                totalAmount = totalAmount.subtract(discount);
+            } else if ("FIXED_AMOUNT".equalsIgnoreCase(voucher.getDiscountType())) {
+                totalAmount = totalAmount.subtract(voucher.getDiscountValue());
+                if (totalAmount.compareTo(BigDecimal.ZERO) < 0) {
+                    totalAmount = BigDecimal.ZERO;
+                }
+            }
+
+            voucher.setCurrentUsage(voucher.getCurrentUsage() + 1);
+            voucherRepository.save(voucher);
+            booking.setVoucher(voucher);
+        }
+
         booking.setTotalAmount(totalAmount);
         
         Booking savedBooking = bookingRepository.save(booking);
@@ -168,14 +199,81 @@ public class BookingService implements IBookingService {
     @Override
     public List<BookingDTO> getMyBookings(UUID userId) {
         return bookingRepository.findByUserId(userId).stream()
-                .map(b -> BookingDTO.builder()
-                        .id(b.getId())
-                        .userId(b.getUser().getId())
-                        .concertId(b.getConcert().getId())
-                        .status(b.getStatus())
-                        .totalAmount(b.getTotalAmount())
-                        .createdAt(b.getCreatedAt())
-                        .build())
+                .map(this::mapToDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookingDTO> getAllBookingsForOperation(String status, UUID concertId) {
+        return bookingRepository.findBookingsByFilters(status, concertId).stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public BookingDTO updateBookingStatus(UUID bookingId, String newStatus) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+        booking.setStatus(newStatus);
+        return mapToDTO(bookingRepository.save(booking));
+    }
+
+    private BookingDTO mapToDTO(Booking b) {
+        return BookingDTO.builder()
+                .id(b.getId())
+                .userId(b.getUser().getId())
+                .concertId(b.getConcert().getId())
+                .status(b.getStatus())
+                .totalAmount(b.getTotalAmount())
+                .createdAt(b.getCreatedAt())
+                .build();
+    }
+
+    @Transactional
+    public void cancelExpiredBookings(OffsetDateTime cutoffTime) {
+        List<Booking> expiredBookings = bookingRepository.findExpiredPendingBookings(cutoffTime);
+        for (Booking booking : expiredBookings) {
+            cancelBooking(booking.getId());
+        }
+    }
+
+    @Transactional
+    public void cancelBooking(UUID bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        if (!"PENDING".equals(booking.getStatus())) {
+            return; // Can only cancel pending bookings
+        }
+
+        // Release seats and standing tickets
+        for (BookingDetail detail : booking.getBookingDetails()) {
+            if (detail.getSeat() != null) {
+                // Return seat to AVAILABLE
+                Seat seat = seatRepository.findByIdForUpdate(detail.getSeat().getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Seat not found"));
+                seat.setStatus("AVAILABLE");
+                seat.setBooking(null);
+                seatRepository.save(seat);
+            } else {
+                // Return standing ticket quantity
+                TicketCategory category = ticketCategoryRepository.findByIdForUpdate(detail.getTicketCategory().getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                category.setAvailableQuantity(category.getAvailableQuantity() + detail.getQuantity());
+                ticketCategoryRepository.save(category);
+            }
+        }
+
+        // Return voucher usage
+        if (booking.getVoucher() != null) {
+            Voucher voucher = voucherRepository.findByCodeForUpdate(booking.getVoucher().getCode())
+                    .orElseThrow(() -> new ResourceNotFoundException("Voucher not found"));
+            voucher.setCurrentUsage(voucher.getCurrentUsage() - 1);
+            voucherRepository.save(voucher);
+        }
+
+        booking.setStatus("CANCELLED");
+        bookingRepository.save(booking);
     }
 }

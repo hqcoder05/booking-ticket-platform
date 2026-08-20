@@ -64,6 +64,18 @@ public class OperationConcertController {
                 .build());
     }
 
+    @PutMapping("/{id}/cancel")
+    @Operation(summary = "Cancel a concert and automatically refund completed bookings")
+    public ResponseEntity<ApiResponse<ConcertDTO>> cancelConcert(@PathVariable UUID id) {
+        ConcertDTO concert = concertService.cancelConcert(id);
+        return ResponseEntity.ok(ApiResponse.<ConcertDTO>builder()
+                .code(200)
+                .message("Concert cancelled and bookings refunded")
+                .result(concert)
+                .timestamp(OffsetDateTime.now())
+                .build());
+    }
+
     @PostMapping("/{id}/ticket-categories")
     @Operation(summary = "Add a ticket category to a concert")
     public ResponseEntity<ApiResponse<TicketCategoryDTO>> addTicketCategory(

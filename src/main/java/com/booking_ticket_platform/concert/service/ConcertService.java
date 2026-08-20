@@ -12,7 +12,11 @@ import com.booking_ticket_platform.shared.exception.ResourceNotFoundException;
 import com.booking_ticket_platform.venue.dto.VenueDTO;
 import com.booking_ticket_platform.venue.entity.Venue;
 import com.booking_ticket_platform.venue.repository.IVenueRepository;
+import com.booking_ticket_platform.concert.repository.ISeatRepository;
+import com.booking_ticket_platform.booking.repository.IBookingRepository;
+import com.booking_ticket_platform.booking.entity.Booking;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +29,19 @@ public class ConcertService implements IConcertService {
     private final IConcertRepository concertRepository;
     private final IVenueRepository venueRepository;
     private final ITicketCategoryRepository ticketCategoryRepository;
+    private final ISeatRepository seatRepository;
+    private final IBookingRepository bookingRepository;
 
-    public ConcertService(IConcertRepository concertRepository, IVenueRepository venueRepository, ITicketCategoryRepository ticketCategoryRepository) {
+    public ConcertService(IConcertRepository concertRepository,
+                          IVenueRepository venueRepository,
+                          ITicketCategoryRepository ticketCategoryRepository,
+                          ISeatRepository seatRepository,
+                          IBookingRepository bookingRepository) {
         this.concertRepository = concertRepository;
         this.venueRepository = venueRepository;
         this.ticketCategoryRepository = ticketCategoryRepository;
+        this.seatRepository = seatRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     @Override
@@ -67,6 +79,24 @@ public class ConcertService implements IConcertService {
         Concert concert = concertRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Concert not found"));
         concert.setStatus("PUBLISHED");
+        return mapToDTO(concertRepository.save(concert));
+    }
+
+    @Override
+    @Transactional
+    public ConcertDTO cancelConcert(UUID id) {
+        Concert concert = concertRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Concert not found"));
+        
+        concert.setStatus("CANCELLED");
+        
+        // Find all completed bookings and refund them
+        List<Booking> completedBookings = bookingRepository.findByConcertIdAndStatus(id, "COMPLETED");
+        for (Booking booking : completedBookings) {
+            booking.setStatus("REFUNDED");
+        }
+        bookingRepository.saveAll(completedBookings);
+        
         return mapToDTO(concertRepository.save(concert));
     }
 

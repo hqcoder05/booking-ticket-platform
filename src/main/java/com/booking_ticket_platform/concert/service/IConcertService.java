@@ -12,6 +12,7 @@ public interface IConcertService {
     ConcertDTO createConcert(ConcertCreateRequest request);
     ConcertDTO updateConcert(UUID id, ConcertCreateRequest request);
     ConcertDTO publishConcert(UUID id);
+    ConcertDTO cancelConcert(UUID id);
     TicketCategoryDTO addTicketCategory(UUID concertId, TicketCategoryCreateRequest request);
     List<ConcertDTO> getPublishedConcerts();
     ConcertDTO getConcertById(UUID id);

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.List;
+import com.booking_ticket_platform.payment.entity.Voucher;
 
 @Entity
 @Table(name = "bookings")
@@ -30,6 +31,10 @@ public class Booking {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concert_id", nullable = false)
     private Concert concert;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
 
     @Column(name = "idempotency_key", nullable = false, unique = true)
     private String idempotencyKey;

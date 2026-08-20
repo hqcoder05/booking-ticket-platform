@@ -15,6 +15,8 @@ public class BookingRequest {
     @NotNull(message = "Idempotency key is required")
     private String idempotencyKey;
 
+    private String voucherCode;
+
     // For standing tickets
     private List<StandingTicketRequest> standingTickets;
 

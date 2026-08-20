@@ -18,4 +18,6 @@ public interface ISeatRepository extends JpaRepository<Seat, UUID> {
     Optional<Seat> findByIdForUpdate(@Param("id") UUID id);
 
     List<Seat> findByTicketCategoryId(UUID ticketCategoryId);
+    
+    List<Seat> findByBookingId(UUID bookingId);
 }
