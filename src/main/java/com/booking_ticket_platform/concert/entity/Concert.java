@@ -36,6 +36,7 @@ public class Concert {
     private String status;
     
     @Column(name = "stage_layout")
+    @Builder.Default
     private String stageLayout = "FRONT";
 
     @OneToMany(mappedBy = "concert", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -63,7 +63,6 @@ public class BookingServiceConcurrencyTest {
 
     private List<UUID> userIds = new ArrayList<>();
     private UUID concertId;
-    private UUID ticketCategoryId;
     private UUID seatId;
 
     @BeforeEach
@@ -115,7 +114,6 @@ public class BookingServiceConcurrencyTest {
         category.setTotalQuantity(1);
         category.setAvailableQuantity(1);
         category = ticketCategoryRepository.save(category);
-        ticketCategoryId = category.getId();
 
         // Create 1 Seat
         Seat seat = new Seat();

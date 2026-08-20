@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.Comparator;
 
 @Service
 public class ConcertService implements IConcertService {
@@ -296,6 +295,7 @@ public class ConcertService implements IConcertService {
     }
 
     @Override
+    @Cacheable(value = "concertSeats", key = "#concertId")
     public java.util.List<com.booking_ticket_platform.concert.dto.SeatDTO> getConcertSeats(java.util.UUID concertId) {
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new com.booking_ticket_platform.shared.exception.ResourceNotFoundException("Concert not found"));
