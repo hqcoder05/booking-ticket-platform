@@ -37,6 +37,18 @@ public class VenueService implements IVenueService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteVenue(java.util.UUID id) {
+        if (!venueRepository.existsById(id)) {
+            throw new com.booking_ticket_platform.shared.exception.ResourceNotFoundException("Venue not found");
+        }
+        try {
+            venueRepository.deleteById(id);
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            throw new IllegalStateException("Cannot delete venue because it is used by existing concerts.");
+        }
+    }
+
     private VenueDTO mapToDTO(Venue venue) {
         return VenueDTO.builder()
                 .id(venue.getId())

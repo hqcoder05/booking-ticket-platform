@@ -13,7 +13,12 @@ public interface IConcertService {
     ConcertDTO updateConcert(UUID id, ConcertCreateRequest request);
     ConcertDTO publishConcert(UUID id);
     ConcertDTO cancelConcert(UUID id);
+    void deleteConcert(UUID id);
     TicketCategoryDTO addTicketCategory(UUID concertId, TicketCategoryCreateRequest request);
+    TicketCategoryDTO updateTicketCategory(UUID concertId, UUID categoryId, TicketCategoryCreateRequest request);
+    void deleteTicketCategory(UUID concertId, UUID categoryId);
     List<ConcertDTO> getPublishedConcerts();
+    List<ConcertDTO> getAllConcerts();
     ConcertDTO getConcertById(UUID id);
+    List<com.booking_ticket_platform.concert.dto.SeatDTO> getConcertSeats(UUID concertId);
 }

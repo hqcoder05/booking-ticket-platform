@@ -7,4 +7,5 @@ import java.util.List;
 public interface IVenueService {
     VenueDTO createVenue(VenueCreateRequest request);
     List<VenueDTO> getAllVenues();
+    void deleteVenue(java.util.UUID id);
 }

@@ -67,6 +67,11 @@ public class BookingService implements IBookingService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        long pendingCount = bookingRepository.countByUserIdAndStatus(userId, "PENDING");
+        if (pendingCount >= 1) {
+            throw new IllegalStateException("Bạn đang có 1 đơn hàng đang chờ thanh toán. Vui lòng thanh toán đơn hàng đó hoặc chờ 5 phút để hệ thống tự hủy trước khi đặt vé mới!");
+        }
+
         Concert concert = concertRepository.findById(request.getConcertId())
                 .orElseThrow(() -> new ResourceNotFoundException("Concert not found"));
 
@@ -87,6 +92,8 @@ public class BookingService implements IBookingService {
                 .createdAt(OffsetDateTime.now())
                 .totalAmount(BigDecimal.ZERO) // temporary
                 .build();
+        
+        booking = bookingRepository.save(booking);
 
         // 1. Process Seated Tickets (Pessimistic Lock)
         if (request.getSeatIds() != null && !request.getSeatIds().isEmpty()) {
@@ -220,6 +227,18 @@ public class BookingService implements IBookingService {
     }
 
     private BookingDTO mapToDTO(Booking b) {
+        java.util.List<com.booking_ticket_platform.booking.dto.BookingDetailDTO> items = null;
+        if (b.getBookingDetails() != null) {
+            items = b.getBookingDetails().stream().map(d -> com.booking_ticket_platform.booking.dto.BookingDetailDTO.builder()
+                    .id(d.getId())
+                    .categoryName(d.getTicketCategory().getName())
+                    .seatNumber(d.getSeat() != null ? d.getSeat().getSeatNumber() : null)
+                    .quantity(d.getQuantity())
+                    .price(d.getPrice())
+                    .build()
+            ).collect(Collectors.toList());
+        }
+
         return BookingDTO.builder()
                 .id(b.getId())
                 .userId(b.getUser().getId())
@@ -227,6 +246,7 @@ public class BookingService implements IBookingService {
                 .status(b.getStatus())
                 .totalAmount(b.getTotalAmount())
                 .createdAt(b.getCreatedAt())
+                .items(items)
                 .build();
     }
 
