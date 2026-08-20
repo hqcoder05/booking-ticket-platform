@@ -1,0 +1,5 @@
+INSERT INTO vouchers (id, code, discount_type, discount_value, max_usage, current_usage)
+VALUES 
+    ('11111111-1111-1111-1111-111111111111', 'EARLYBIRD', 'PERCENTAGE', 10, 100, 0),
+    ('22222222-2222-2222-2222-222222222222', 'DISCOUNT50K', 'FIXED_AMOUNT', 50000, 50, 0)
+ON CONFLICT DO NOTHING;
