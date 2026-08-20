@@ -19,4 +19,6 @@ public class ConcertCreateRequest {
     @NotNull(message = "Event date is required")
     @Future(message = "Event date must be in the future")
     private OffsetDateTime eventDate;
+    
+    private String stageLayout;
 }

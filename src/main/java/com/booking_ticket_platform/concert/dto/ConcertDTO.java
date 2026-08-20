@@ -16,5 +16,6 @@ public class ConcertDTO {
     private String name;
     private OffsetDateTime eventDate;
     private String status;
+    private String stageLayout;
     private List<TicketCategoryDTO> ticketCategories;
 }
