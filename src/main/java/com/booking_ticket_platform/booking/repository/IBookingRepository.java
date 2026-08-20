@@ -21,4 +21,6 @@ public interface IBookingRepository extends JpaRepository<Booking, UUID> {
     List<Booking> findBookingsByFilters(@Param("status") String status, @Param("concertId") UUID concertId);
 
     List<Booking> findByConcertIdAndStatus(UUID concertId, String status);
+
+    long countByUserIdAndStatus(UUID userId, String status);
 }

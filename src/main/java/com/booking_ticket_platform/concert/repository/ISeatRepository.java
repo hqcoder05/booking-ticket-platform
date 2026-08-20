@@ -20,4 +20,6 @@ public interface ISeatRepository extends JpaRepository<Seat, UUID> {
     List<Seat> findByTicketCategoryId(UUID ticketCategoryId);
     
     List<Seat> findByBookingId(UUID bookingId);
+
+    List<Seat> findByTicketCategory_Concert_Id(UUID concertId);
 }
