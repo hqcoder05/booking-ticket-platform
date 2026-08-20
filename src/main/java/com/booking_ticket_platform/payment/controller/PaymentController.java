@@ -1,5 +1,6 @@
 package com.booking_ticket_platform.payment.controller;
 
+import com.booking_ticket_platform.payment.dto.PaymentInitiateRequest;
 import com.booking_ticket_platform.payment.service.PaymentService;
 import com.booking_ticket_platform.payment.entity.Payment;
 import com.booking_ticket_platform.payment.dto.PaymentDTO;
@@ -20,8 +21,8 @@ public class PaymentController {
     }
 
     @PostMapping("/initiate")
-    public ResponseEntity<ApiResponse<PaymentDTO>> initiatePayment(@RequestParam UUID bookingId, @RequestParam String method) {
-        Payment payment = paymentService.initiatePayment(bookingId, method);
+    public ResponseEntity<ApiResponse<PaymentDTO>> initiatePayment(@RequestBody PaymentInitiateRequest request) {
+        Payment payment = paymentService.initiatePayment(request.getBookingId(), request.getMethod());
         PaymentDTO dto = PaymentDTO.builder()
                 .id(payment.getId())
                 .bookingId(payment.getBooking().getId())
@@ -35,7 +36,7 @@ public class PaymentController {
                 .build());
     }
 
-    @PostMapping("/{paymentId}/complete")
+    @PutMapping("/{paymentId}/complete")
     public ResponseEntity<ApiResponse<PaymentDTO>> completePayment(@PathVariable UUID paymentId) {
         Payment payment = paymentService.completePayment(paymentId);
         PaymentDTO dto = PaymentDTO.builder()

@@ -46,4 +46,16 @@ public class CustomerConcertController {
                 .timestamp(OffsetDateTime.now())
                 .build());
     }
+
+    @GetMapping("/{id}/seats")
+    @Operation(summary = "Get seats for a concert")
+    public ResponseEntity<ApiResponse<List<com.booking_ticket_platform.concert.dto.SeatDTO>>> getConcertSeats(@PathVariable UUID id) {
+        List<com.booking_ticket_platform.concert.dto.SeatDTO> seats = concertService.getConcertSeats(id);
+        return ResponseEntity.ok(ApiResponse.<List<com.booking_ticket_platform.concert.dto.SeatDTO>>builder()
+                .code(200)
+                .message("Fetched seats successfully")
+                .result(seats)
+                .timestamp(OffsetDateTime.now())
+                .build());
+    }
 }

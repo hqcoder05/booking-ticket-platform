@@ -47,4 +47,15 @@ public class OperationVenueController {
                 .timestamp(OffsetDateTime.now())
                 .build());
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a venue")
+    public ResponseEntity<ApiResponse<Void>> deleteVenue(@PathVariable java.util.UUID id) {
+        venueService.deleteVenue(id);
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .code(200)
+                .message("Venue deleted successfully")
+                .timestamp(OffsetDateTime.now())
+                .build());
+    }
 }

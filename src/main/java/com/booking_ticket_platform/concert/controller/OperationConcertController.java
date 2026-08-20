@@ -26,6 +26,18 @@ public class OperationConcertController {
         this.concertService = concertService;
     }
 
+    @GetMapping
+    @Operation(summary = "Get list of all concerts (including DRAFT, CANCELLED)")
+    public ResponseEntity<ApiResponse<java.util.List<ConcertDTO>>> getAllConcerts() {
+        java.util.List<ConcertDTO> concerts = concertService.getAllConcerts();
+        return ResponseEntity.ok(ApiResponse.<java.util.List<ConcertDTO>>builder()
+                .code(200)
+                .message("Fetched all concerts successfully")
+                .result(concerts)
+                .timestamp(OffsetDateTime.now())
+                .build());
+    }
+
     @PostMapping
     @Operation(summary = "Create a new concert (DRAFT)")
     public ResponseEntity<ApiResponse<ConcertDTO>> createConcert(@Valid @RequestBody ConcertCreateRequest request) {
@@ -76,6 +88,17 @@ public class OperationConcertController {
                 .build());
     }
 
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a DRAFT concert")
+    public ResponseEntity<ApiResponse<Void>> deleteConcert(@PathVariable UUID id) {
+        concertService.deleteConcert(id);
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .code(200)
+                .message("Concert deleted successfully")
+                .timestamp(OffsetDateTime.now())
+                .build());
+    }
+
     @PostMapping("/{id}/ticket-categories")
     @Operation(summary = "Add a ticket category to a concert")
     public ResponseEntity<ApiResponse<TicketCategoryDTO>> addTicketCategory(
@@ -86,6 +109,34 @@ public class OperationConcertController {
                 .code(200)
                 .message("Ticket category added successfully")
                 .result(category)
+                .timestamp(OffsetDateTime.now())
+                .build());
+    }
+
+    @PutMapping("/{id}/ticket-categories/{categoryId}")
+    @Operation(summary = "Update a ticket category")
+    public ResponseEntity<ApiResponse<TicketCategoryDTO>> updateTicketCategory(
+            @PathVariable UUID id,
+            @PathVariable UUID categoryId,
+            @Valid @RequestBody TicketCategoryCreateRequest request) {
+        TicketCategoryDTO category = concertService.updateTicketCategory(id, categoryId, request);
+        return ResponseEntity.ok(ApiResponse.<TicketCategoryDTO>builder()
+                .code(200)
+                .message("Ticket category updated successfully")
+                .result(category)
+                .timestamp(OffsetDateTime.now())
+                .build());
+    }
+
+    @DeleteMapping("/{id}/ticket-categories/{categoryId}")
+    @Operation(summary = "Delete a ticket category")
+    public ResponseEntity<ApiResponse<Void>> deleteTicketCategory(
+            @PathVariable UUID id,
+            @PathVariable UUID categoryId) {
+        concertService.deleteTicketCategory(id, categoryId);
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .code(200)
+                .message("Ticket category deleted successfully")
                 .timestamp(OffsetDateTime.now())
                 .build());
     }
