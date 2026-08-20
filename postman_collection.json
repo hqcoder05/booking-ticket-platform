@@ -1,0 +1,135 @@
+{
+  "info": {
+    "name": "GeekUp Booking Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080/api/v1" },
+    { "key": "token", "value": "" },
+    { "key": "concertId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "if (data.data.accessToken) { pm.collectionVariables.set('token', data.data.accessToken); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": [ "{{baseUrl}}" ], "path": [ "auth", "login" ] },
+            "body": { "mode": "raw", "raw": "{\"email\":\"customer@test.com\",\"password\":\"password\"}" }
+          }
+        },
+        {
+          "name": "Login Operation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "if (data.data.accessToken) { pm.collectionVariables.set('token', data.data.accessToken); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": [ "{{baseUrl}}" ], "path": [ "auth", "login" ] },
+            "body": { "mode": "raw", "raw": "{\"email\":\"admin@test.com\",\"password\":\"password\"}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customer",
+      "item": [
+        {
+          "name": "Get Concerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/customer/concerts", "host": [ "{{baseUrl}}" ], "path": [ "customer", "concerts" ] }
+          }
+        },
+        {
+          "name": "Get Concert Seats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/customer/concerts/{{concertId}}/seats", "host": [ "{{baseUrl}}" ], "path": [ "customer", "concerts", "{{concertId}}", "seats" ] }
+          }
+        },
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Idempotency-Key", "value": "TEST-12345" }
+            ],
+            "url": { "raw": "{{baseUrl}}/customer/bookings", "host": [ "{{baseUrl}}" ], "path": [ "customer", "bookings" ] },
+            "body": { "mode": "raw", "raw": "{\n  \"concertId\": \"{{concertId}}\",\n  \"seatIds\": [\n    \"REPLACE_WITH_SEAT_ID\"\n  ]\n}" }
+          }
+        },
+        {
+          "name": "Pay Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/customer/payments", "host": [ "{{baseUrl}}" ], "path": [ "customer", "payments" ] },
+            "body": { "mode": "raw", "raw": "{\n  \"bookingId\": \"REPLACE_WITH_BOOKING_ID\",\n  \"paymentMethod\": \"MOMO\"\n}" }
+          }
+        },
+        {
+          "name": "My Bookings",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/customer/bookings", "host": [ "{{baseUrl}}" ], "path": [ "customer", "bookings" ] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operation",
+      "item": [
+        {
+          "name": "Get All Bookings",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/operation/bookings", "host": [ "{{baseUrl}}" ], "path": [ "operation", "bookings" ] }
+          }
+        },
+        {
+          "name": "Cancel Concert",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/operation/concerts/{{concertId}}/cancel", "host": [ "{{baseUrl}}" ], "path": [ "operation", "concerts", "{{concertId}}", "cancel" ] }
+          }
+        }
+      ]
+    }
+  ]
+}
