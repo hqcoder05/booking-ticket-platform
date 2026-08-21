@@ -22,12 +22,18 @@ public class VoucherService {
         return voucherRepository.findAll();
     }
 
-    public Voucher createVoucher(Voucher voucher) {
+    public Voucher createVoucher(com.booking_ticket_platform.payment.dto.VoucherCreateRequest request) {
         if (voucherRepository.findAll().stream()
-                .anyMatch(v -> v.getCode().equalsIgnoreCase(voucher.getCode()))) {
-            throw new DuplicateResourceException("Voucher code '" + voucher.getCode() + "' already exists");
+                .anyMatch(v -> v.getCode().equalsIgnoreCase(request.getCode()))) {
+            throw new DuplicateResourceException("Voucher code '" + request.getCode() + "' already exists");
         }
-        voucher.setCurrentUsage(0);
+        Voucher voucher = Voucher.builder()
+                .code(request.getCode())
+                .discountType(request.getDiscountType())
+                .discountValue(request.getDiscountValue())
+                .maxUsage(request.getMaxUsage())
+                .currentUsage(0)
+                .build();
         return voucherRepository.save(voucher);
     }
 

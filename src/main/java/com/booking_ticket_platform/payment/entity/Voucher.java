@@ -32,6 +32,7 @@ public class Voucher {
     @Column(name = "max_usage", nullable = false)
     private int maxUsage;
 
+    @Builder.Default
     @Column(name = "current_usage", nullable = false)
-    private int currentUsage;
+    private int currentUsage = 0;
 }

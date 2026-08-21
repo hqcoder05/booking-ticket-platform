@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(org.springframework.http.converter.HttpMessageNotReadableException exception) {
         ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
                 .code(HttpStatus.BAD_REQUEST.value())
-                .message("Dữ liệu đầu vào không đúng định dạng (JSON Parse Error). Vui lòng kiểm tra lại kiểu dữ liệu (VD: UUID, Date, Enum).")
+                .message("Dữ liệu đầu vào không đúng định dạng (JSON Parse Error). Vui lòng kiểm tra lại kiểu dữ liệu.")
                 .timestamp(OffsetDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);

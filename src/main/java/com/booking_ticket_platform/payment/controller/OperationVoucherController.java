@@ -35,8 +35,8 @@ public class OperationVoucherController {
 
     @PostMapping
     @Operation(summary = "Create a new voucher")
-    public ResponseEntity<ApiResponse<Voucher>> createVoucher(@Valid @RequestBody Voucher voucher) {
-        Voucher created = voucherService.createVoucher(voucher);
+    public ResponseEntity<ApiResponse<Voucher>> createVoucher(@Valid @RequestBody com.booking_ticket_platform.payment.dto.VoucherCreateRequest request) {
+        Voucher created = voucherService.createVoucher(request);
         return ResponseEntity.ok(ApiResponse.<Voucher>builder()
                 .code(201)
                 .message("Voucher created successfully")
