@@ -1,7 +1,10 @@
 # Hệ thống Đặt vé Sự kiện (Concert Ticket Booking Platform)
 
-Đây là dự án backend phục vụ cho bài Assessment vị trí Product Backend Engineer. Hệ thống cung cấp các RESTful API an toàn, xử lý concurrency tốt, phục vụ cho hai luồng nghiệp vụ chính: Khách hàng (Customer booking workflows) và Vận hành nội bộ (Internal operation workflows).
+Đây là dự án backend phục vụ cho bài Assessment vị trí Product Backend Engineer. Hệ thống cung cấp các RESTful API an toàn, xử lý concurrency tốt.
 
+**Provide Backend APIs for both:**
+- **Customer-facing booking flows**
+- **Internal operation workflows**
 ## 1. Hướng dẫn Cài đặt & Chạy dự án Local
 
 ### Yêu cầu môi trường (Prerequisites)

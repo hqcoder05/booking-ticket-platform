@@ -8,7 +8,9 @@ Cách tiếp cận của tôi đối với hệ thống này đặt **Tính toà
 - **Monolith First:** Một kiến trúc Monolith được module hóa rõ ràng (phân tách rạch ròi domain `customer` và `operation`) mang lại giá trị cao hơn nhiều so với một kiến trúc Microservices làm vội vàng. Nó loại bỏ độ trễ mạng (network latency) giữa các services và giúp việc quản lý ACID transactions trở nên an toàn tuyệt đối.
 - **Let the Database Do the Heavy Lifting:** PostgreSQL là một hệ quản trị CSDL cực kỳ mạnh mẽ. Thay vì nhồi nhét các cơ chế distributed locks từ bên ngoài (như Redis/Zookeeper) làm tăng độ phức tạp vận hành, tôi tận dụng triệt để khóa mức dòng (Row-level locking: `SELECT FOR UPDATE`) của PostgreSQL để đảm bảo tính nhất quán dữ liệu.
 
-### Backend APIs phục vụ cho 2 luồng nghiệp vụ chính:
+### Provide Backend APIs for both:
+- Customer-facing booking flows
+- Internal operation workflows
 
 **A. Customer-facing Booking Flows** (`/api/customer/**`):
 | API | Mô tả |
