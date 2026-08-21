@@ -45,7 +45,18 @@ public class GlobalExceptionHandler {
 
 
 
-    //3. Bat tat ca cac loi Crash he thong khong mong muon
+    //3. Bat loi JSON Parse (VD: sai format UUID, sai format Date)
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(org.springframework.http.converter.HttpMessageNotReadableException exception) {
+        ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message("Dữ liệu đầu vào không đúng định dạng (JSON Parse Error). Vui lòng kiểm tra lại kiểu dữ liệu (VD: UUID, Date, Enum).")
+                .timestamp(OffsetDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    }
+
+    //4. Bat tat ca cac loi Crash he thong khong mong muon
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception exception) {
         ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
