@@ -10,6 +10,7 @@ import { AdminDashboard } from './pages/admin/AdminDashboard'
 import { CreateConcert } from './pages/admin/CreateConcert'
 import { EditConcert } from './pages/admin/EditConcert'
 import { Venues } from './pages/admin/Venues'
+import { Vouchers } from './pages/admin/Vouchers'
 import { Settings } from './pages/admin/Settings'
 import { Login } from './pages/auth/Login'
 import { Register } from './pages/auth/Register'
@@ -43,6 +44,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="concerts/new" element={<CreateConcert />} />
             <Route path="concerts/:id/edit" element={<EditConcert />} />
             <Route path="venues" element={<Venues />} />
+            <Route path="vouchers" element={<Vouchers />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>

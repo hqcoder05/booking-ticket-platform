@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, Navigate } from 'react-router-dom';
-import { LayoutDashboard, Ticket, Map, Settings } from 'lucide-react';
+import { LayoutDashboard, Ticket, Map, Settings, Tag } from 'lucide-react';
 
 export function AdminLayout() {
   const location = useLocation();
@@ -12,6 +12,7 @@ export function AdminLayout() {
   const navItems = [
     { name: 'Sự kiện (Concerts)', path: '/admin', icon: Ticket },
     { name: 'Địa điểm (Venues)', path: '/admin/venues', icon: Map },
+    { name: 'Voucher', path: '/admin/vouchers', icon: Tag },
     { name: 'Cài đặt', path: '/admin/settings', icon: Settings },
   ];
 
