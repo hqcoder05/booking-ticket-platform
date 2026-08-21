@@ -53,7 +53,7 @@ public class AuthService implements IAuthService {
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
-                .user(UserMapper.toDTO(user))
+                .user(com.booking_ticket_platform.auth.dto.UserDTO.builder().role(user.getRole()).build())
                 .build();
     }
 
@@ -74,7 +74,7 @@ public class AuthService implements IAuthService {
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
-                .user(UserMapper.toDTO(user))
+                .user(com.booking_ticket_platform.auth.dto.UserDTO.builder().role(user.getRole()).build())
                 .build();
     }
 

@@ -1,6 +1,7 @@
 package com.booking_ticket_platform.auth.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.UUID;
 import lombok.*;
 
@@ -10,6 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Schema(description = "Data Transfer Object cho ho so nguoi dung")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDTO {
     @Schema(description = "UUID ma dinh danh duy nhat cua nguoi dung", example = "123e4567-e89b-12d3-a456-426614174000")
     private UUID id;
