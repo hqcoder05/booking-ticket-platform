@@ -8,6 +8,28 @@ Cách tiếp cận của tôi đối với hệ thống này đặt **Tính toà
 - **Monolith First:** Một kiến trúc Monolith được module hóa rõ ràng (phân tách rạch ròi domain `customer` và `operation`) mang lại giá trị cao hơn nhiều so với một kiến trúc Microservices làm vội vàng. Nó loại bỏ độ trễ mạng (network latency) giữa các services và giúp việc quản lý ACID transactions trở nên an toàn tuyệt đối.
 - **Let the Database Do the Heavy Lifting:** PostgreSQL là một hệ quản trị CSDL cực kỳ mạnh mẽ. Thay vì nhồi nhét các cơ chế distributed locks từ bên ngoài (như Redis/Zookeeper) làm tăng độ phức tạp vận hành, tôi tận dụng triệt để khóa mức dòng (Row-level locking: `SELECT FOR UPDATE`) của PostgreSQL để đảm bảo tính nhất quán dữ liệu.
 
+### Backend APIs phục vụ cho 2 luồng nghiệp vụ chính:
+
+**A. Customer-facing Booking Flows** (`/api/customer/**`):
+| API | Mô tả |
+|-----|-------|
+| `GET /api/customer/concerts` | Xem danh sách sự kiện đang mở bán (PUBLISHED) |
+| `GET /api/customer/concerts/{id}/seats` | Xem bản đồ ghế trống (có Caffeine Cache) |
+| `POST /api/customer/bookings` | Đặt vé (chọn ghế/standing + áp voucher) |
+| `POST /api/customer/bookings/{id}/pay` | Thanh toán đơn hàng |
+| `GET /api/customer/bookings` | Xem lịch sử đặt vé của bản thân |
+
+**B. Internal Operation Workflows** (`/api/operation/**`):
+| API | Mô tả |
+|-----|-------|
+| `CRUD /api/operation/venues` | Quản lý Địa điểm tổ chức |
+| `CRUD /api/operation/concerts` | Quản lý Sự kiện (tạo, sửa, publish, hủy) |
+| `POST /api/operation/concerts/{id}/categories` | Tạo hạng vé và ghế ngồi |
+| `GET /api/operation/bookings` | Xem tất cả đơn hàng (filter theo status/concert) |
+| `PUT /api/operation/bookings/{id}/status` | Cập nhật trạng thái đơn hàng |
+
+> **Phân quyền:** Customer APIs yêu cầu role `CUSTOMER` hoặc `ADMIN`. Operation APIs yêu cầu role `ADMIN` hoặc `OPERATOR`. Concerts API (GET) được mở public cho anonymous users.
+
 ## 2. Thiết kế Cơ sở dữ liệu (Database Design)
 
 Database được chuẩn hóa (normalized) hoàn toàn và quản lý version qua **Flyway Migrations**.
