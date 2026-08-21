@@ -17,6 +17,27 @@
       "name": "1. Auth",
       "item": [
         {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "if (data.result && data.result.accessToken) { pm.collectionVariables.set('token', data.result.accessToken); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": [ "{{baseUrl}}" ], "path": [ "auth", "register" ] },
+            "body": { "mode": "raw", "raw": "{\"email\":\"newuser@geekup.vn\",\"password\":\"password123\"}" }
+          }
+        },
+        {
           "name": "Login Admin",
           "event": [
             {
