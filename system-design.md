@@ -25,6 +25,9 @@ Cách tiếp cận của tôi đối với hệ thống này đặt **Tính toà
 | `CRUD /api/operation/venues` | Quản lý Địa điểm tổ chức |
 | `CRUD /api/operation/concerts` | Quản lý Sự kiện (tạo, sửa, publish, hủy) |
 | `POST /api/operation/concerts/{id}/categories` | Tạo hạng vé và ghế ngồi |
+| `GET /api/operation/vouchers` | Xem danh sách voucher |
+| `POST /api/operation/vouchers` | Tạo mã giảm giá mới |
+| `DELETE /api/operation/vouchers/{id}` | Xóa voucher (chỉ khi chưa sử dụng) |
 | `GET /api/operation/bookings` | Xem tất cả đơn hàng (filter theo status/concert) |
 | `PUT /api/operation/bookings/{id}/status` | Cập nhật trạng thái đơn hàng |
 
@@ -63,6 +66,7 @@ Hệ thống sử dụng Flyway migration `V4__seed_all_data.sql` để tạo s�
 ### Những tính năng ĐÃ LÀM (In Scope):
 - **Máy trạng thái 4-bước cho Booking:** `PENDING` → `PAID` → `CANCELLED` → `REFUNDED`
 - **Áp dụng Voucher khi đặt vé:** Khách hàng gửi `voucherCode` trong request đặt vé. Hệ thống tự động tính giảm giá (theo % hoặc theo số tiền cố định) và áp dụng Pessimistic Lock để chống lạm dụng voucher.
+- **Operation team tạo/quản lý Vouchers:** API `POST /api/operation/vouchers` cho phép tạo mã giảm giá mới, `GET` để xem danh sách, `DELETE` để xóa (chỉ khi chưa có ai sử dụng). Hệ thống **KHÔNG** hỗ trợ cập nhật (update) voucher đã tạo — nếu cần thay đổi, operator phải xóa và tạo mới để đảm bảo tính toàn vẹn dữ liệu.
 - **Idempotent API:** Hỗ trợ safe retries cho luồng Booking.
 - **Seat Auto-Release:** Scheduled Job quét và nhả ghế `PENDING` nếu không thanh toán trong 5 phút.
 - **Anti-Seat Hoarding:** 1 User chỉ được phép có tối đa 1 booking `PENDING` cùng lúc.
@@ -70,7 +74,7 @@ Hệ thống sử dụng Flyway migration `V4__seed_all_data.sql` để tạo s�
 - **Load Test thực tế:** Script Python bắn 10.000 requests đồng thời, chứng minh hệ thống đạt 500+ RPS trên máy local.
 
 ### Những tính năng CHƯA LÀM (Out of Scope / Limitations):
-- **CRUD Operations cho Vouchers:** Hệ thống *KHÔNG* cung cấp các API cho Operation để create/update/delete vouchers. Dữ liệu voucher được seed qua Flyway.
+- **Update Voucher:** Không hỗ trợ sửa voucher đã tạo (phải xóa + tạo mới).
 - **Tích hợp Cổng thanh toán thật:** API `/pay` mock quá trình thanh toán thành công.
 - **WebSockets cho Bản đồ ghế:** Frontend dùng cơ chế Polling.
 
