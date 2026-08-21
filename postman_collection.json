@@ -4,14 +4,39 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8080/api/v1" },
+    { "key": "baseUrl", "value": "http://localhost:8080/api" },
     { "key": "token", "value": "" },
-    { "key": "concertId", "value": "" }
+    { "key": "concertId", "value": "" },
+    { "key": "venueId", "value": "" },
+    { "key": "bookingId", "value": "" },
+    { "key": "paymentId", "value": "" },
+    { "key": "voucherId", "value": "" }
   ],
   "item": [
     {
-      "name": "Auth",
+      "name": "1. Auth",
       "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "if (data.result && data.result.accessToken) { pm.collectionVariables.set('token', data.result.accessToken); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": [ "{{baseUrl}}" ], "path": [ "auth", "login" ] },
+            "body": { "mode": "raw", "raw": "{\"email\":\"admin@geekup.vn\",\"password\":\"admin123\"}" }
+          }
+        },
         {
           "name": "Login Customer",
           "event": [
@@ -20,7 +45,7 @@
               "script": {
                 "exec": [
                   "var data = pm.response.json();",
-                  "if (data.data.accessToken) { pm.collectionVariables.set('token', data.data.accessToken); }"
+                  "if (data.result && data.result.accessToken) { pm.collectionVariables.set('token', data.result.accessToken); }"
                 ],
                 "type": "text/javascript"
               }
@@ -30,37 +55,16 @@
             "method": "POST",
             "header": [ { "key": "Content-Type", "value": "application/json" } ],
             "url": { "raw": "{{baseUrl}}/auth/login", "host": [ "{{baseUrl}}" ], "path": [ "auth", "login" ] },
-            "body": { "mode": "raw", "raw": "{\"email\":\"customer@test.com\",\"password\":\"password\"}" }
-          }
-        },
-        {
-          "name": "Login Operation",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var data = pm.response.json();",
-                  "if (data.data.accessToken) { pm.collectionVariables.set('token', data.data.accessToken); }"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": [ "{{baseUrl}}" ], "path": [ "auth", "login" ] },
-            "body": { "mode": "raw", "raw": "{\"email\":\"admin@test.com\",\"password\":\"password\"}" }
+            "body": { "mode": "raw", "raw": "{\"email\":\"customer@geekup.vn\",\"password\":\"admin123\"}" }
           }
         }
       ]
     },
     {
-      "name": "Customer",
+      "name": "2. Customer APIs",
       "item": [
         {
-          "name": "Get Concerts",
+          "name": "Get Published Concerts",
           "request": {
             "method": "GET",
             "header": [],
@@ -77,31 +81,66 @@
         },
         {
           "name": "Create Booking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "if (data.result && data.result.id) { pm.collectionVariables.set('bookingId', data.result.id); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Idempotency-Key", "value": "TEST-12345" }
+              { "key": "Idempotency-Key", "value": "TEST-UUID-12345" }
             ],
             "url": { "raw": "{{baseUrl}}/customer/bookings", "host": [ "{{baseUrl}}" ], "path": [ "customer", "bookings" ] },
-            "body": { "mode": "raw", "raw": "{\n  \"concertId\": \"{{concertId}}\",\n  \"seatIds\": [\n    \"REPLACE_WITH_SEAT_ID\"\n  ]\n}" }
+            "body": { "mode": "raw", "raw": "{\n  \"concertId\": \"{{concertId}}\",\n  \"seatIds\": [\n    \"REPLACE_WITH_SEAT_ID\"\n  ],\n  \"voucherCode\": \"\"\n}" }
           }
         },
         {
-          "name": "Pay Booking",
+          "name": "Initiate Payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "if (data.result && data.result.id) { pm.collectionVariables.set('paymentId', data.result.id); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
-            "url": { "raw": "{{baseUrl}}/customer/payments", "host": [ "{{baseUrl}}" ], "path": [ "customer", "payments" ] },
-            "body": { "mode": "raw", "raw": "{\n  \"bookingId\": \"REPLACE_WITH_BOOKING_ID\",\n  \"paymentMethod\": \"MOMO\"\n}" }
+            "url": { "raw": "{{baseUrl}}/customer/payments/initiate", "host": [ "{{baseUrl}}" ], "path": [ "customer", "payments", "initiate" ] },
+            "body": { "mode": "raw", "raw": "{\n  \"bookingId\": \"{{bookingId}}\",\n  \"method\": \"MOMO\"\n}" }
           }
         },
         {
-          "name": "My Bookings",
+          "name": "Complete Payment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/customer/payments/{{paymentId}}/complete", "host": [ "{{baseUrl}}" ], "path": [ "customer", "payments", "{{paymentId}}", "complete" ] }
+          }
+        },
+        {
+          "name": "Get My Bookings",
           "request": {
             "method": "GET",
             "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
@@ -111,23 +150,114 @@
       ]
     },
     {
-      "name": "Operation",
+      "name": "3. Operation APIs",
       "item": [
         {
-          "name": "Get All Bookings",
-          "request": {
-            "method": "GET",
-            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
-            "url": { "raw": "{{baseUrl}}/operation/bookings", "host": [ "{{baseUrl}}" ], "path": [ "operation", "bookings" ] }
-          }
+          "name": "Venues",
+          "item": [
+            {
+              "name": "Get All Venues",
+              "request": {
+                "method": "GET",
+                "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                "url": { "raw": "{{baseUrl}}/operation/venues", "host": [ "{{baseUrl}}" ], "path": [ "operation", "venues" ] }
+              }
+            },
+            {
+              "name": "Create Venue",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{baseUrl}}/operation/venues", "host": [ "{{baseUrl}}" ], "path": [ "operation", "venues" ] },
+                "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test Venue\",\n  \"location\": \"Hanoi\",\n  \"capacity\": 1000\n}" }
+              }
+            }
+          ]
         },
         {
-          "name": "Cancel Concert",
-          "request": {
-            "method": "POST",
-            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
-            "url": { "raw": "{{baseUrl}}/operation/concerts/{{concertId}}/cancel", "host": [ "{{baseUrl}}" ], "path": [ "operation", "concerts", "{{concertId}}", "cancel" ] }
-          }
+          "name": "Concerts",
+          "item": [
+            {
+              "name": "Get All Concerts (Admin)",
+              "request": {
+                "method": "GET",
+                "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                "url": { "raw": "{{baseUrl}}/operation/concerts", "host": [ "{{baseUrl}}" ], "path": [ "operation", "concerts" ] }
+              }
+            },
+            {
+              "name": "Create Concert",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{baseUrl}}/operation/concerts", "host": [ "{{baseUrl}}" ], "path": [ "operation", "concerts" ] },
+                "body": { "mode": "raw", "raw": "{\n  \"name\": \"New Concert\",\n  \"description\": \"A great show\",\n  \"venueId\": \"{{venueId}}\",\n  \"startTime\": \"2027-10-10T19:00:00Z\",\n  \"endTime\": \"2027-10-10T22:00:00Z\"\n}" }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Vouchers",
+          "item": [
+            {
+              "name": "Get All Vouchers",
+              "request": {
+                "method": "GET",
+                "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                "url": { "raw": "{{baseUrl}}/operation/vouchers", "host": [ "{{baseUrl}}" ], "path": [ "operation", "vouchers" ] }
+              }
+            },
+            {
+              "name": "Create Voucher",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{baseUrl}}/operation/vouchers", "host": [ "{{baseUrl}}" ], "path": [ "operation", "vouchers" ] },
+                "body": { "mode": "raw", "raw": "{\n  \"code\": \"NEW50\",\n  \"discountType\": \"PERCENTAGE\",\n  \"discountValue\": 50,\n  \"maxUsage\": 100\n}" }
+              }
+            },
+            {
+              "name": "Delete Voucher",
+              "request": {
+                "method": "DELETE",
+                "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                "url": { "raw": "{{baseUrl}}/operation/vouchers/{{voucherId}}", "host": [ "{{baseUrl}}" ], "path": [ "operation", "vouchers", "{{voucherId}}" ] }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bookings",
+          "item": [
+            {
+              "name": "Get All Bookings",
+              "request": {
+                "method": "GET",
+                "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                "url": { "raw": "{{baseUrl}}/operation/bookings", "host": [ "{{baseUrl}}" ], "path": [ "operation", "bookings" ] }
+              }
+            },
+            {
+              "name": "Update Booking Status",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{baseUrl}}/operation/bookings/{{bookingId}}/status?status=CANCELLED", "host": [ "{{baseUrl}}" ], "path": [ "operation", "bookings", "{{bookingId}}", "status" ], "query": [ { "key": "status", "value": "CANCELLED" } ] }
+              }
+            }
+          ]
         }
       ]
     }
