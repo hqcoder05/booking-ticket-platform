@@ -192,7 +192,7 @@
                   { "key": "Authorization", "value": "Bearer {{token}}" }
                 ],
                 "url": { "raw": "{{baseUrl}}/operation/venues", "host": [ "{{baseUrl}}" ], "path": [ "operation", "venues" ] },
-                "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test Venue\",\n  \"location\": \"Hanoi\",\n  \"capacity\": 1000\n}" }
+                "body": { "mode": "raw", "raw": "{\n  \"name\": \"Sân vận động Mỹ Đình\",\n  \"address\": \"Đường Lê Đức Thọ\",\n  \"city\": \"Hà Nội\",\n  \"capacity\": 40000\n}" }
               }
             }
           ]
@@ -217,7 +217,7 @@
                   { "key": "Authorization", "value": "Bearer {{token}}" }
                 ],
                 "url": { "raw": "{{baseUrl}}/operation/concerts", "host": [ "{{baseUrl}}" ], "path": [ "operation", "concerts" ] },
-                "body": { "mode": "raw", "raw": "{\n  \"name\": \"New Concert\",\n  \"description\": \"A great show\",\n  \"venueId\": \"{{venueId}}\",\n  \"startTime\": \"2027-10-10T19:00:00Z\",\n  \"endTime\": \"2027-10-10T22:00:00Z\"\n}" }
+                "body": { "mode": "raw", "raw": "{\n  \"name\": \"New Concert 2027\",\n  \"venueId\": \"{{venueId}}\",\n  \"eventDate\": \"2027-10-10T19:00:00Z\",\n  \"stageLayout\": \"STANDARD\"\n}" }
               }
             }
           ]
