@@ -118,11 +118,10 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Idempotency-Key", "value": "TEST-UUID-12345" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": { "raw": "{{baseUrl}}/customer/bookings", "host": [ "{{baseUrl}}" ], "path": [ "customer", "bookings" ] },
-            "body": { "mode": "raw", "raw": "{\n  \"concertId\": \"{{concertId}}\",\n  \"seatIds\": [\n    \"123e4567-e89b-12d3-a456-426614174000\"\n  ],\n  \"voucherCode\": \"\"\n}" }
+            "body": { "mode": "raw", "raw": "{\n  \"concertId\": \"{{concertId}}\",\n  \"seatIds\": [\n    \"123e4567-e89b-12d3-a456-426614174000\"\n  ],\n  \"voucherCode\": \"\",\n  \"idempotencyKey\": \"TEST-UUID-12345\"\n}" }
           }
         },
         {
