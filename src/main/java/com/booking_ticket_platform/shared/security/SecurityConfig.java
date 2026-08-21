@@ -51,7 +51,7 @@ public class SecurityConfig {
             .cors(org.springframework.security.config.Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                .requestMatchers("/api/auth/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/customer/concerts/**").permitAll()
                 .requestMatchers("/api/operation/**").hasAnyRole("ADMIN", "OPERATOR")
                 .requestMatchers("/api/customer/**").hasAnyRole("CUSTOMER", "ADMIN")
